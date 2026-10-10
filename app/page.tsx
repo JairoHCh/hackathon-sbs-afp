@@ -4,7 +4,8 @@ export default function Home() {
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col gap-6 px-4 py-10">
       <header>
-        <h1 className="text-2xl font-semibold">Hackathon SBS AFP</h1>
+        <h1 className="text-3xl font-bold">Hola jairo, mucha suerteeee</h1>
+        <h2 className="mt-2 text-lg font-semibold">Hackathon SBS AFP</h2>
         <p className="text-sm text-zinc-500">{datos.mensaje}</p>
       </header>
 
