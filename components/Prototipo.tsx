@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Flag, House, Laptop, MessageCircle, Smartphone, Target, TrendingUp, type LucideIcon } from "lucide-react";
 import { Kapicoin } from "@/components/comunes";
 import { calcularRacha, misionesPorReclamar, ProveedorNido, useNido, type Tab } from "@/components/estado";
+import { Leccion } from "@/components/leccion";
 import { Misiones } from "@/components/misiones";
 import { Chat, Futuro, Inicio, Proyeccion, Registro } from "@/components/pantallas";
 import { VistaWeb } from "@/components/web";
@@ -130,14 +131,25 @@ function Telefono({ irWeb }: { irWeb: () => void }) {
         </nav>
       )}
 
+      {n.leccion && (
+        <Leccion
+          key={n.leccion}
+          id={n.leccion}
+          irA={(t) => {
+            n.cerrarLeccion();
+            irA(t);
+          }}
+        />
+      )}
+
       {n.aviso && (
         <div
-          key={n.aviso}
+          key={n.aviso.id}
           role="status"
-          className="animar-subida pointer-events-none absolute inset-x-0 top-12 z-30 mx-auto flex w-fit items-center gap-2 rounded-full bg-tinta px-4 py-2.5 text-sm font-semibold text-white shadow-2xl"
+          className="animar-subida pointer-events-none absolute inset-x-0 top-12 z-50 mx-auto flex w-fit items-center gap-2 rounded-full bg-tinta px-4 py-2.5 text-sm font-semibold text-white shadow-2xl"
         >
           <Kapicoin tam={20} />
-          {n.aviso}
+          {n.aviso.texto}
         </div>
       )}
 

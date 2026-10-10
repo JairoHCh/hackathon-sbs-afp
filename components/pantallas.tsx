@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import {
+  Check,
   ChevronLeft,
   ChevronRight,
   Crown,
@@ -26,7 +27,6 @@ import {
   Personaje,
   TONOS,
   personaje,
-  tono,
   type IdPersonaje,
 } from "@/components/comunes";
 import {
@@ -212,7 +212,12 @@ export function Inicio({ irA }: { irA: (t: Tab) => void }) {
               Nivel {nivel.nivel} · {nivel.nombre}
             </p>
           </div>
-          <div className="relative shrink-0">
+          <button
+            type="button"
+            onClick={() => n.abrirLeccion("porky")}
+            aria-label="Que Porky Cash te explique"
+            className="relative shrink-0 rounded-full transition active:scale-95"
+          >
             <Avatar
               id="porky"
               tam={78}
@@ -223,7 +228,7 @@ export function Inicio({ irA }: { irA: (t: Tab) => void }) {
                 <Crown className="size-4" aria-hidden="true" />
               </span>
             )}
-          </div>
+          </button>
         </div>
 
         <div className="relative mt-4 flex justify-between">
@@ -340,47 +345,43 @@ export function Inicio({ irA }: { irA: (t: Tab) => void }) {
 }
 
 function Equipo() {
-  const [sel, setSel] = useState(0);
-  const [idx, setIdx] = useState(0);
-  const id = EQUIPO[sel];
-  const p = personaje(id);
-  const t = tono(id);
+  const n = useNido();
 
   return (
     <section className={TARJETA}>
       <div className="flex items-baseline justify-between">
-        <p className="font-display text-lg font-semibold">Tu equipo</p>
-        <p className="text-xs text-tenue">4 amigos, 1 mismo objetivo</p>
+        <p className="font-display text-lg font-semibold">Aprende con tu equipo</p>
+        <p className="text-xs font-medium tabular-nums text-tenue">
+          {n.leccionesVistas.length}/{EQUIPO.length} lecciones
+        </p>
       </div>
-      <div className="mt-3 grid grid-cols-4 gap-2">
-        {EQUIPO.map((x, i) => {
-          const tx = TONOS[personaje(x).tono as keyof typeof TONOS];
+      <p className="mt-0.5 text-[13px] text-suave">Toca a un personaje y te lo explica en 1 minuto.</p>
+      <div className="mt-3 grid grid-cols-2 gap-2">
+        {EQUIPO.map((x) => {
+          const p = personaje(x);
+          const tx = TONOS[p.tono as keyof typeof TONOS];
+          const vista = n.leccionesVistas.includes(x);
           return (
             <button
               key={x}
               type="button"
-              aria-pressed={i === sel}
-              onClick={() => {
-                if (i === sel) setIdx(idx + 1);
-                else {
-                  setSel(i);
-                  setIdx(0);
-                }
-              }}
-              className={`flex flex-col items-center gap-1.5 rounded-2xl border-2 p-2 transition ${
-                i === sel ? `${tx.borde} ${tx.fondo}` : "border-transparent"
-              }`}
+              onClick={() => n.abrirLeccion(x)}
+              aria-label={`${p.nombre} te explica: ${p.tema}`}
+              className={`relative flex items-center gap-2.5 rounded-2xl p-2.5 text-left transition active:scale-[0.97] ${tx.fondo}`}
             >
-              <Avatar id={x} tam={48} />
-              <span className="text-center text-[11px] font-semibold leading-tight">{personaje(x).nombre}</span>
+              <Avatar id={x} tam={44} />
+              <span className="min-w-0">
+                <span className={`block font-display text-[14px] font-semibold leading-tight ${tx.texto}`}>{p.nombre}</span>
+                <span className="block text-[11px] leading-tight text-suave">{p.tema}</span>
+              </span>
+              {vista && (
+                <span className="absolute right-2 top-2 grid size-5 place-items-center rounded-full bg-marca text-white">
+                  <Check className="size-3" aria-hidden="true" />
+                </span>
+              )}
             </button>
           );
         })}
-      </div>
-      <div key={`${sel}-${idx}`} className={`animar-subida mt-3 rounded-2xl p-3 ${t.fondo}`}>
-        <p className={`font-display text-[15px] font-semibold ${t.texto}`}>{p.lema}</p>
-        <p className="mt-1 text-sm leading-snug">{p.consejos[idx % p.consejos.length]}</p>
-        <p className="mt-2 text-[11px] text-tenue">Toca de nuevo para otro consejo</p>
       </div>
     </section>
   );

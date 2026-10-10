@@ -1,0 +1,103 @@
+{
+  "_nota": "Guiones provisionales. Reemplaza los pasos de cada personaje con el guion final del equipo. Un paso con 'pregunta' se muestra como mini quiz.",
+  "porky": {
+    "cta": { "texto": "Registrar un ingreso", "ir": "chat" },
+    "pasos": [
+      {
+        "titulo": "¡Hola! Soy Porky Cash",
+        "texto": "Soy tu aliado en el ahorro. Hoy te cuento el secreto de las personas que sí logran ahorrar, aunque ganen poco."
+      },
+      {
+        "titulo": "Ahorrar no es lo que sobra",
+        "texto": "Si esperas a fin de mes para ver qué sobra, casi nunca sobra nada. El truco es pagarte a ti primero: aparta algo apenas recibes tu dinero, aunque sea poquito."
+      },
+      {
+        "titulo": "Primero, tu colchón",
+        "texto": "Un fondo de emergencia te protege de imprevistos: se malogra tu celular o tienes una semana sin trabajo. Así no tendrás que tocar tu ahorro para la vejez."
+      },
+      {
+        "titulo": "Pon a prueba lo aprendido",
+        "pregunta": "¿Cuándo es mejor apartar tu ahorro?",
+        "opciones": ["Apenas recibo mi dinero", "A fin de mes, con lo que sobre", "Solo cuando gano mucho"],
+        "correcta": 0,
+        "bien": "¡Exacto! Pagarte a ti primero hace que el ahorro no dependa de lo que sobre.",
+        "mal": "Casi nunca sobra… Apartar apenas recibes tu dinero funciona mucho mejor."
+      }
+    ]
+  },
+  "sabiondo": {
+    "cta": { "texto": "Ver mi proyección", "ir": "proyeccion" },
+    "pasos": [
+      {
+        "titulo": "¡Hola! Soy Sabiondo",
+        "texto": "Me encanta explicar cómo crece el dinero. Hoy te cuento sobre el interés compuesto, el mejor amigo de quien empieza temprano."
+      },
+      {
+        "titulo": "Tus ganancias también ganan",
+        "texto": "Si ahorras S/ 100 y ganas 5% al año, al terminar el año tienes S/ 105. Al año siguiente ganas 5% sobre S/ 105, no solo sobre S/ 100. Eso es el interés compuesto."
+      },
+      {
+        "titulo": "El tiempo es tu superpoder",
+        "texto": "Por eso empezar a los 20 y no a los 30 marca la diferencia. En tu Proyección verás que, con el mismo aporte, esperar 10 años puede dejarte con cerca de 40% menos."
+      },
+      {
+        "titulo": "Pon a prueba lo aprendido",
+        "pregunta": "Ahorras S/ 100 al 5% anual con interés compuesto. ¿Cuánto tendrás al final del segundo año?",
+        "opciones": ["S/ 110", "S/ 110.25", "S/ 105"],
+        "correcta": 1,
+        "bien": "¡Bien! El segundo año ganas 5% sobre S/ 105: S/ 5.25 más.",
+        "mal": "Casi. El segundo año el 5% se calcula sobre S/ 105, así que llegas a S/ 110.25."
+      }
+    ]
+  },
+  "kapifin": {
+    "cta": { "texto": "Ver mis misiones", "ir": "misiones" },
+    "pasos": [
+      {
+        "titulo": "¡Hola! Soy Kapifin",
+        "texto": "Organiza hoy, logra mañana. Te enseño a ordenar tu plata aunque tus ingresos cambien cada mes."
+      },
+      {
+        "titulo": "Ingresos variables, plan flexible",
+        "texto": "Si no sabes cuánto ganarás, no te pongas un monto fijo: usa un porcentaje. Por ejemplo, aparta el 10% de cada ingreso. Si ganas más, ahorras más; si ganas menos, igual cumples."
+      },
+      {
+        "titulo": "Metas con nombre",
+        "texto": "Una meta clara es más fácil de cumplir: qué quieres, cuánto cuesta y para cuándo. Tus misiones te ayudan a avanzar paso a paso y te dan Kapicoins."
+      },
+      {
+        "titulo": "Pon a prueba lo aprendido",
+        "pregunta": "Este mes recibiste S/ 200 y el próximo S/ 500. Si apartas el 10% de cada ingreso, ¿cuánto ahorras en total?",
+        "opciones": ["S/ 50", "S/ 70", "S/ 100"],
+        "correcta": 1,
+        "bien": "¡Eso! S/ 20 + S/ 50 = S/ 70. Ahorraste sin comprometerte a un monto fijo.",
+        "mal": "Revisa: el 10% de S/ 200 es S/ 20 y el de S/ 500 es S/ 50. En total, S/ 70."
+      }
+    ]
+  },
+  "monedina": {
+    "cta": { "texto": "Ver mi meta", "ir": "futuro" },
+    "pasos": [
+      {
+        "titulo": "¡Hola! Soy Monedina",
+        "texto": "Guarda hoy, cumple mañana. Te explico cómo funciona el ahorro para tu vejez, sin palabras complicadas."
+      },
+      {
+        "titulo": "¿Qué es el ahorro previsional?",
+        "texto": "Es el dinero que juntas mientras trabajas para tener una pensión cuando seas mayor. En el Perú puedes aportar a la ONP o a una AFP, y si trabajas por tu cuenta también puedes aportar de forma voluntaria."
+      },
+      {
+        "titulo": "Cuidado con retirarlo antes",
+        "texto": "Cada retiro anticipado reduce tu pensión futura. Según la SBS, por los retiros de 2020 a 2022, un afiliado promedio de 40 años tendría un fondo 48% menor al jubilarse."
+      },
+      {
+        "titulo": "Pon a prueba lo aprendido",
+        "pregunta": "¿Para qué sirve principalmente tu fondo de pensiones?",
+        "opciones": ["Para gastos del día a día", "Para tener ingresos cuando sea mayor", "Para comprar un celular nuevo"],
+        "correcta": 1,
+        "bien": "¡Exacto! Es tu ingreso para cuando dejes de trabajar.",
+        "mal": "No exactamente: tu fondo de pensiones es para tener ingresos cuando seas mayor."
+      }
+    ]
+  }
+}

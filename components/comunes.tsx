@@ -16,16 +16,25 @@ import {
 } from "lucide-react";
 import datos from "@/data/datos.json";
 import { proyectar, soles, type Punto } from "@/lib/finanzas";
+import { useNido, type IdPersonaje } from "@/components/estado";
 
-export type IdPersonaje = "porky" | "sabiondo" | "kapifin" | "monedina";
+export type { IdPersonaje };
 
 // Clases completas (no interpoladas) para que Tailwind las detecte.
 export const TONOS = {
-  marca: { texto: "text-marca-700", fondo: "bg-marca-50", borde: "border-marca", solido: "bg-marca" },
-  sabiondo: { texto: "text-sabiondo-700", fondo: "bg-sabiondo-50", borde: "border-sabiondo", solido: "bg-sabiondo" },
-  kapifin: { texto: "text-kapifin-900", fondo: "bg-kapifin-50", borde: "border-kapifin", solido: "bg-kapifin" },
-  monedina: { texto: "text-monedina-700", fondo: "bg-monedina-50", borde: "border-monedina", solido: "bg-monedina" },
+  marca: { texto: "text-marca-700", fondo: "bg-marca-50", borde: "border-marca", solido: "bg-marca text-white" },
+  sabiondo: { texto: "text-sabiondo-700", fondo: "bg-sabiondo-50", borde: "border-sabiondo", solido: "bg-sabiondo text-white" },
+  kapifin: { texto: "text-kapifin-900", fondo: "bg-kapifin-50", borde: "border-kapifin", solido: "bg-kapifin text-kapifin-900" },
+  monedina: { texto: "text-monedina-700", fondo: "bg-monedina-50", borde: "border-monedina", solido: "bg-monedina text-white" },
 } as const;
+
+// Tamaño real de las ilustraciones de cuerpo completo en /public/personajes.
+export const CUERPOS: Record<IdPersonaje, { ancho: number; alto: number }> = {
+  porky: { ancho: 335, alto: 480 },
+  sabiondo: { ancho: 315, alto: 480 },
+  kapifin: { ancho: 335, alto: 480 },
+  monedina: { ancho: 341, alto: 480 },
+};
 
 export const personaje = (id: IdPersonaje) => datos.personajes.find((p) => p.id === id) ?? datos.personajes[0];
 export const tono = (id: IdPersonaje) => TONOS[personaje(id).tono as keyof typeof TONOS];
@@ -61,10 +70,21 @@ export function Kapicoin({ tam = 20 }: { tam?: number }) {
 }
 
 export function Personaje({ id, texto }: { id: IdPersonaje; texto?: string }) {
+  const { abrirLeccion } = useNido();
   const p = personaje(id);
   return (
     <div className="flex items-start gap-3">
-      <Avatar id={id} tam={48} className="shadow-suave" />
+      <button
+        type="button"
+        onClick={() => abrirLeccion(id)}
+        aria-label={`Que ${p.nombre} te explique`}
+        className="relative shrink-0 rounded-full transition active:scale-95"
+      >
+        <Avatar id={id} tam={48} className="shadow-suave" />
+        <span className={`absolute -bottom-1 -right-1 grid size-5 place-items-center rounded-full text-[11px] font-bold ring-2 ring-white ${tono(id).solido}`}>
+          ?
+        </span>
+      </button>
       <div className="rounded-2xl rounded-tl-md border border-borde bg-white px-3.5 py-2.5 shadow-suave">
         <p className={`font-display text-[13px] font-semibold ${tono(id).texto}`}>{p.nombre}</p>
         <p className="mt-0.5 text-[14px] leading-snug">{texto ?? p.frase}</p>

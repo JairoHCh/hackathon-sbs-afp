@@ -56,3 +56,79 @@ body {
 .animar-subida {
   animation: subir 220ms ease-out both;
 }
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes entrar-mascota {
+  0% {
+    opacity: 0;
+    transform: translateY(48px) scale(0.88);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1.03);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes flotar {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes palabra {
+  from {
+    opacity: 0;
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    filter: none;
+  }
+}
+
+.animar-aparecer {
+  animation: aparecer 200ms ease-out both;
+}
+
+.animar-mascota {
+  animation: entrar-mascota 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.flotar {
+  animation: flotar 3.2s ease-in-out 600ms infinite;
+}
+
+.animar-palabra {
+  animation: palabra 260ms ease-out both;
+}
+
+/* Funde el fondo de las ilustraciones recortadas del afiche. Se puede quitar
+   cuando lleguen las mascotas con fondo transparente. */
+.desvanecer-bordes {
+  mask-image: radial-gradient(ellipse 62% 58% at 50% 55%, #000 62%, transparent 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animar-subida,
+  .animar-aparecer,
+  .animar-mascota,
+  .flotar,
+  .animar-palabra {
+    animation: none;
+  }
+}

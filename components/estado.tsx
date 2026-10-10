@@ -38,9 +38,13 @@ type Estado = {
   kapicoins: number;
   misiones: Record<string, EstadoMision>;
   canjes: string[];
-  aviso: string | null;
+  aviso: { id: number; texto: string } | null;
   celebracion: string | null;
+  leccion: IdPersonaje | null;
+  leccionesVistas: IdPersonaje[];
 };
+
+export type IdPersonaje = "porky" | "sabiondo" | "kapifin" | "monedina";
 
 export const SUGERENCIAS: Chip[] = [
   { etiqueta: "Hoy recibí 350 soles", enviar: "Hoy recibí 350 soles" },
@@ -72,6 +76,8 @@ const inicial: Estado = {
   canjes: [],
   aviso: null,
   celebracion: null,
+  leccion: null,
+  leccionesVistas: [],
 };
 
 let ultimoId = 1000;
@@ -100,12 +106,13 @@ export function nivelMascota(racha: number) {
 }
 
 // Marca como "lista" (por reclamar) toda misión pendiente que se cumple con esta acción.
+// Devuelve el mismo objeto si nada cambia, para no provocar renders de más.
 function cumplir(misiones: Record<string, EstadoMision>, ...acciones: string[]) {
-  const nuevas = { ...misiones };
-  for (const m of datos.misiones) {
-    if (acciones.includes(m.accion) && nuevas[m.id] === "pendiente") nuevas[m.id] = "lista";
-  }
-  return nuevas;
+  const ids = datos.misiones
+    .filter((m) => acciones.includes(m.accion) && misiones[m.id] === "pendiente")
+    .map((m) => m.id);
+  if (ids.length === 0) return misiones;
+  return { ...misiones, ...Object.fromEntries(ids.map((id) => [id, "lista" as const])) };
 }
 
 export const misionesPorReclamar = (misiones: Record<string, EstadoMision>) =>
@@ -115,8 +122,9 @@ function useCrearNido() {
   const [estado, setEstado] = useState<Estado>(inicial);
 
   const avisar = (texto: string) => {
-    setEstado((e) => ({ ...e, aviso: texto }));
-    setTimeout(() => setEstado((e) => (e.aviso === texto ? { ...e, aviso: null } : e)), 1800);
+    const id = nuevoId();
+    setEstado((e) => ({ ...e, aviso: { id, texto } }));
+    setTimeout(() => setEstado((e) => (e.aviso?.id === id ? { ...e, aviso: null } : e)), 1800);
   };
 
   return {
@@ -157,7 +165,19 @@ function useCrearNido() {
         evoluciono: nivelMascota(despues).nivel > nivelMascota(antes).nivel,
       };
     },
-    cumplirMision: (accion: string) => setEstado((e) => ({ ...e, misiones: cumplir(e.misiones, accion) })),
+    cumplirMision: (accion: string) =>
+      setEstado((e) => {
+        const misiones = cumplir(e.misiones, accion);
+        return misiones === e.misiones ? e : { ...e, misiones };
+      }),
+    abrirLeccion: (id: IdPersonaje) => setEstado((e) => ({ ...e, leccion: id })),
+    cerrarLeccion: () => setEstado((e) => ({ ...e, leccion: null })),
+    terminarLeccion: (id: IdPersonaje) =>
+      setEstado((e) => ({
+        ...e,
+        leccionesVistas: e.leccionesVistas.includes(id) ? e.leccionesVistas : [...e.leccionesVistas, id],
+        misiones: cumplir(e.misiones, "leccion"),
+      })),
     reclamar: (id: string) => {
       const m = datos.misiones.find((x) => x.id === id);
       if (!m || estado.misiones[id] !== "lista") return;
