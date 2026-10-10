@@ -1,17 +1,72 @@
 "use client";
 
+import Image from "next/image";
+import {
+  Crown,
+  Flame,
+  Gift,
+  Lightbulb,
+  MessageCircle,
+  PiggyBank,
+  ShieldCheck,
+  Sun,
+  Target,
+  TrendingUp,
+  type LucideIcon,
+} from "lucide-react";
 import datos from "@/data/datos.json";
 import { proyectar, soles, type Punto } from "@/lib/finanzas";
 
-export function Personaje({ id, texto }: { id: string; texto?: string }) {
-  const p = datos.personajes.find((x) => x.id === id) ?? datos.personajes[0];
+export type IdPersonaje = "porky" | "sabiondo" | "kapifin" | "monedina";
+
+// Clases completas (no interpoladas) para que Tailwind las detecte.
+export const TONOS = {
+  marca: { texto: "text-marca-700", fondo: "bg-marca-50", borde: "border-marca", solido: "bg-marca" },
+  sabiondo: { texto: "text-sabiondo-700", fondo: "bg-sabiondo-50", borde: "border-sabiondo", solido: "bg-sabiondo" },
+  kapifin: { texto: "text-kapifin-900", fondo: "bg-kapifin-50", borde: "border-kapifin", solido: "bg-kapifin" },
+  monedina: { texto: "text-monedina-700", fondo: "bg-monedina-50", borde: "border-monedina", solido: "bg-monedina" },
+} as const;
+
+export const personaje = (id: IdPersonaje) => datos.personajes.find((p) => p.id === id) ?? datos.personajes[0];
+export const tono = (id: IdPersonaje) => TONOS[personaje(id).tono as keyof typeof TONOS];
+
+export const ICONOS: Record<string, LucideIcon> = {
+  sol: Sun,
+  chat: MessageCircle,
+  alcancia: PiggyBank,
+  foco: Lightbulb,
+  racha: Flame,
+  grafico: TrendingUp,
+  meta: Target,
+  escudo: ShieldCheck,
+  corona: Crown,
+  regalo: Gift,
+};
+
+export function Avatar({ id, tam = 44, className = "" }: { id: IdPersonaje; tam?: number; className?: string }) {
+  return (
+    <Image
+      src={`/personajes/${id}-cara.webp`}
+      alt={personaje(id).nombre}
+      width={tam}
+      height={tam}
+      className={`shrink-0 rounded-full bg-white object-cover ring-2 ring-white ${className}`}
+      style={{ width: tam, height: tam }}
+    />
+  );
+}
+
+export function Kapicoin({ tam = 20 }: { tam?: number }) {
+  return <Image src="/kapicoin.png" alt="Kapicoins" width={tam} height={tam} style={{ width: tam, height: tam }} />;
+}
+
+export function Personaje({ id, texto }: { id: IdPersonaje; texto?: string }) {
+  const p = personaje(id);
   return (
     <div className="flex items-start gap-3">
-      <div className="grid size-11 shrink-0 place-items-center rounded-full bg-[#FFF1D6] text-2xl">
-        {p.emoji}
-      </div>
-      <div className="rounded-2xl rounded-tl-sm border border-[#E3E9E6] bg-white px-3.5 py-2.5 shadow-sm">
-        <p className="text-xs font-semibold text-[#A8670A]">{p.nombre}</p>
+      <Avatar id={id} tam={48} className="shadow-suave" />
+      <div className="rounded-2xl rounded-tl-md border border-borde bg-white px-3.5 py-2.5 shadow-suave">
+        <p className={`font-display text-[13px] font-semibold ${tono(id).texto}`}>{p.nombre}</p>
         <p className="mt-0.5 text-[14px] leading-snug">{texto ?? p.frase}</p>
       </div>
     </div>
@@ -36,36 +91,38 @@ export function Grafico({ aporte, tasa }: { aporte: number; tasa: number }) {
       <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label="Proyección del ahorro según la edad de inicio">
         <defs>
           <linearGradient id="relleno" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="#0E7C66" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="#0E7C66" stopOpacity="0" />
+            <stop offset="0%" stopColor="#2f6fe4" stopOpacity="0.22" />
+            <stop offset="100%" stopColor="#2f6fe4" stopOpacity="0" />
           </linearGradient>
         </defs>
         {[0.25, 0.5, 0.75, 1].map((f) => (
-          <line key={f} x1={pad.l} x2={W - pad.r} y1={y(max * f)} y2={y(max * f)} stroke="#E3E9E6" strokeWidth="1" />
+          <line key={f} x1={pad.l} x2={W - pad.r} y1={y(max * f)} y2={y(max * f)} stroke="#e2eae6" strokeWidth="1" />
         ))}
-        <line x1={pad.l} x2={W - pad.r} y1={y(0)} y2={y(0)} stroke="#C9D3CF" strokeWidth="1" />
+        <line x1={pad.l} x2={W - pad.r} y1={y(0)} y2={y(0)} stroke="#c9d3cf" strokeWidth="1" />
         <path d={area} fill="url(#relleno)" />
-        <path d={linea(a.serie)} fill="none" stroke="#0E7C66" strokeWidth="2.5" strokeLinejoin="round" />
-        <path d={linea(b.serie)} fill="none" stroke="#E0920F" strokeWidth="2.5" strokeDasharray="5 4" strokeLinejoin="round" />
+        <path d={linea(a.serie)} fill="none" stroke="#2f6fe4" strokeWidth="2.5" strokeLinejoin="round" />
+        <path d={linea(b.serie)} fill="none" stroke="#f2a900" strokeWidth="2.5" strokeDasharray="5 4" strokeLinejoin="round" />
         {[20, 30, 40, 50, 65].map((e) => (
           <text
             key={e}
             x={x(e)}
             y={H - 6}
             fontSize="10"
-            fill="#6B7A75"
+            fill="#6b7a75"
             textAnchor={e === 20 ? "start" : e === 65 ? "end" : "middle"}
           >
             {e === 65 ? "65 años" : e}
           </text>
         ))}
       </svg>
-      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#4F5F5A]">
+      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-suave">
         <span className="flex items-center gap-1.5">
-          <span className="h-0.5 w-4 rounded bg-[#0E7C66]" /> Empezando a los 20: {soles(a.total)}
+          <span className="h-0.5 w-4 rounded bg-sabiondo" /> Empezando a los 20:{" "}
+          <b className="tabular-nums text-tinta">{soles(a.total)}</b>
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-0.5 w-4 rounded border-t-2 border-dashed border-[#E0920F]" /> A los 30: {soles(b.total)}
+          <span className="h-0.5 w-4 rounded border-t-2 border-dashed border-kapifin" /> A los 30:{" "}
+          <b className="tabular-nums text-tinta">{soles(b.total)}</b>
         </span>
       </div>
     </div>

@@ -13,7 +13,7 @@ export type Mov = {
   fecha: string;
   nuevo?: boolean;
 };
-export type Tab = "inicio" | "chat" | "proyeccion" | "futuro";
+export type Tab = "inicio" | "chat" | "misiones" | "proyeccion" | "futuro";
 export type Chip = {
   etiqueta: string;
   enviar?: string;
@@ -22,6 +22,7 @@ export type Chip = {
   ir?: Tab;
 };
 export type Msg = { id: number; de: "bot" | "juan"; texto: string; chips?: Chip[] };
+export type EstadoMision = "pendiente" | "lista" | "reclamada";
 
 type Estado = {
   registrado: boolean;
@@ -34,6 +35,10 @@ type Estado = {
   escribiendo: boolean;
   aporteMensual: number;
   tasa: number;
+  kapicoins: number;
+  misiones: Record<string, EstadoMision>;
+  canjes: string[];
+  aviso: string | null;
   celebracion: string | null;
 };
 
@@ -55,13 +60,17 @@ const inicial: Estado = {
       id: 1,
       de: "bot",
       texto:
-        "¡Hola! 👋 Soy el asistente de Nido.\n\nCuéntame cuando recibas o gastes dinero, como se lo contarías a un amigo. Yo te sugiero cuánto apartar, sin montos fijos.",
+        "¡Hola! 👋 Soy Porky Cash, tu aliado en el ahorro.\n\nCuéntame cuando recibas o gastes dinero, como se lo contarías a un amigo. Yo te sugiero cuánto apartar, sin montos fijos.",
       chips: SUGERENCIAS,
     },
   ],
   escribiendo: false,
   aporteMensual: datos.estadoInicial.aporteMensual,
   tasa: datos.estadoInicial.tasa,
+  kapicoins: datos.estadoInicial.kapicoins,
+  misiones: Object.fromEntries(datos.misiones.map((m) => [m.id, m.inicial as EstadoMision])),
+  canjes: [],
+  aviso: null,
   celebracion: null,
 };
 
@@ -81,17 +90,34 @@ export function calcularRacha(semanas: boolean[]) {
 }
 
 export const NIVELES = [
-  { nivel: 1, nombre: "Bellota", emoji: "🌰", desde: 0 },
-  { nivel: 2, nombre: "Ardilla Constante", emoji: "🐿️", desde: 3 },
-  { nivel: 3, nombre: "Ardilla Maestra", emoji: "🐿️", desde: 6 },
+  { nivel: 1, nombre: "Porky Novato", desde: 0 },
+  { nivel: 2, nombre: "Porky Constante", desde: 3 },
+  { nivel: 3, nombre: "Porky Maestro", desde: 6 },
 ];
 
 export function nivelMascota(racha: number) {
   return [...NIVELES].reverse().find((n) => racha >= n.desde) ?? NIVELES[0];
 }
 
+// Marca como "lista" (por reclamar) toda misión pendiente que se cumple con esta acción.
+function cumplir(misiones: Record<string, EstadoMision>, ...acciones: string[]) {
+  const nuevas = { ...misiones };
+  for (const m of datos.misiones) {
+    if (acciones.includes(m.accion) && nuevas[m.id] === "pendiente") nuevas[m.id] = "lista";
+  }
+  return nuevas;
+}
+
+export const misionesPorReclamar = (misiones: Record<string, EstadoMision>) =>
+  Object.values(misiones).filter((e) => e === "lista").length;
+
 function useCrearNido() {
   const [estado, setEstado] = useState<Estado>(inicial);
+
+  const avisar = (texto: string) => {
+    setEstado((e) => ({ ...e, aviso: texto }));
+    setTimeout(() => setEstado((e) => (e.aviso === texto ? { ...e, aviso: null } : e)), 1800);
+  };
 
   return {
     ...estado,
@@ -107,6 +133,7 @@ function useCrearNido() {
       setEstado((e) => ({
         ...e,
         movimientos: [{ id, tipo, texto, monto, fecha: "Hoy", nuevo: true }, ...e.movimientos],
+        misiones: cumplir(e.misiones, "registrar"),
       }));
     },
     aportar: (prev: number, emer: number, motivo: string) => {
@@ -122,12 +149,30 @@ function useCrearNido() {
           { id, tipo: "aporte", texto: motivo, monto: round2(prev + emer), fecha: "Hoy", nuevo: true },
           ...e.movimientos,
         ],
+        misiones: cumplir(e.misiones, "apartar", "semana"),
       }));
       return {
         subioRacha: despues > antes,
         racha: despues,
         evoluciono: nivelMascota(despues).nivel > nivelMascota(antes).nivel,
       };
+    },
+    cumplirMision: (accion: string) => setEstado((e) => ({ ...e, misiones: cumplir(e.misiones, accion) })),
+    reclamar: (id: string) => {
+      const m = datos.misiones.find((x) => x.id === id);
+      if (!m || estado.misiones[id] !== "lista") return;
+      setEstado((e) => ({
+        ...e,
+        kapicoins: e.kapicoins + m.recompensa,
+        misiones: { ...e.misiones, [id]: "reclamada" },
+      }));
+      avisar(`+${m.recompensa} Kapicoins`);
+    },
+    canjear: (id: string) => {
+      const item = datos.tienda.find((x) => x.id === id);
+      if (!item || estado.kapicoins < item.precio || estado.canjes.includes(id)) return;
+      setEstado((e) => ({ ...e, kapicoins: e.kapicoins - item.precio, canjes: [...e.canjes, id] }));
+      avisar(`Canjeaste: ${item.titulo}`);
     },
     celebrar: (nombre: string) => setEstado((e) => ({ ...e, celebracion: nombre })),
     cerrarCelebracion: () => setEstado((e) => ({ ...e, celebracion: null })),

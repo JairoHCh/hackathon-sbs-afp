@@ -1,19 +1,58 @@
 @import "tailwindcss";
 
-:root {
-  --background: #e4ece8;
-  --foreground: #13201c;
+/* Tokens del sistema de diseño de Nido. Cada personaje es dueño de un color
+   y de una sección: Porky = ahorro (marca), Sabiondo = proyección,
+   Kapifin = misiones y Kapicoins, Monedina = meta a los 65. */
+@theme {
+  --color-marca: #0a7f63;
+  --color-marca-700: #065a46;
+  --color-marca-50: #e7f5ef;
+
+  --color-sabiondo: #2f6fe4;
+  --color-sabiondo-700: #1d4fb8;
+  --color-sabiondo-50: #eaf1fe;
+
+  --color-kapifin: #f2a900;
+  --color-kapifin-900: #5a3e00;
+  --color-kapifin-50: #fff6dc;
+
+  --color-monedina: #7c4ddb;
+  --color-monedina-700: #5b32b0;
+  --color-monedina-50: #f2edfd;
+
+  --color-tinta: #10201b;
+  --color-suave: #56665f;
+  --color-tenue: #8a9893;
+  --color-borde: #e2eae6;
+  --color-fondo: #f3f7f5;
+  --color-lienzo: #e4ece8;
+  --color-peligro: #d92d20;
+
+  --shadow-suave: 0 1px 2px rgb(16 32 27 / 0.04), 0 10px 24px -14px rgb(16 32 27 / 0.2);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-jakarta);
+  --font-display: var(--font-fredoka);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  background: var(--color-lienzo);
+  color: var(--color-tinta);
+  font-family: var(--font-jakarta), system-ui, sans-serif;
+}
+
+@keyframes subir {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animar-subida {
+  animation: subir 220ms ease-out both;
 }

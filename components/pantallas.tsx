@@ -1,11 +1,37 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Crown,
+  Flame,
+  Hourglass,
+  Laptop,
+  MessageCircle,
+  PiggyBank,
+  Send,
+  ShieldCheck,
+  Target,
+  Umbrella,
+} from "lucide-react";
 import datos from "@/data/datos.json";
 import { proyectar, round2, soles, TASAS } from "@/lib/finanzas";
-import { GoogleG, Grafico, Personaje } from "@/components/comunes";
+import {
+  Avatar,
+  GoogleG,
+  Grafico,
+  Kapicoin,
+  Personaje,
+  TONOS,
+  personaje,
+  tono,
+  type IdPersonaje,
+} from "@/components/comunes";
 import {
   calcularRacha,
+  misionesPorReclamar,
   nivelMascota,
   NIVELES,
   SUGERENCIAS,
@@ -14,8 +40,10 @@ import {
   type Tab,
 } from "@/components/estado";
 
-const TEXTO_SUAVE = "text-[#56665F]";
-const TARJETA = "rounded-2xl border border-[#E3E9E6] bg-white p-4";
+export const TARJETA = "rounded-3xl bg-white p-4 shadow-suave";
+const INPUT =
+  "mt-1.5 h-12 w-full rounded-2xl border border-borde bg-fondo px-4 text-[15px] outline-none transition focus:border-marca focus:bg-white focus:ring-4 focus:ring-marca/10";
+const EQUIPO: IdPersonaje[] = ["porky", "sabiondo", "kapifin", "monedina"];
 
 /* ───────────────────────── 1. Registro ───────────────────────── */
 
@@ -29,11 +57,15 @@ export function Registro() {
   const listo = nombre.trim().length > 0 && acepta;
 
   return (
-    <div className="flex min-h-full flex-col bg-white px-6 pb-6 pt-10">
+    <div className="flex min-h-full flex-col bg-white px-6 pb-6 pt-8">
       <div className="flex flex-col items-center text-center">
-        <div className="grid size-20 place-items-center rounded-3xl bg-[#FFF1D6] text-5xl">🐿️</div>
-        <h1 className="mt-4 text-3xl font-bold tracking-tight">{datos.app.nombre}</h1>
-        <p className={`mt-1 text-[15px] ${TEXTO_SUAVE}`}>{datos.app.lema}</p>
+        <div className="flex -space-x-3">
+          {EQUIPO.map((id) => (
+            <Avatar key={id} id={id} tam={56} className="shadow-suave" />
+          ))}
+        </div>
+        <h1 className="mt-4 font-display text-4xl font-semibold text-marca-700">{datos.app.nombre}</h1>
+        <p className="mt-1 text-[15px] text-suave">{datos.app.lema}</p>
       </div>
 
       <button
@@ -42,49 +74,45 @@ export function Registro() {
           setGoogle(true);
           setNombre(datos.usuario.nombre);
         }}
-        className="mt-8 flex h-12 items-center justify-center gap-3 rounded-xl border border-[#D5DDD9] bg-white text-[15px] font-medium shadow-sm active:bg-[#F6F8F7]"
+        className="mt-7 flex h-12 items-center justify-center gap-3 rounded-2xl border border-borde bg-white text-[15px] font-semibold shadow-suave transition active:scale-[0.99]"
       >
         <GoogleG />
         {google ? datos.usuario.correo : "Continuar con Google"}
       </button>
 
-      <div className="my-5 flex items-center gap-3 text-xs text-[#8A9893]">
-        <span className="h-px flex-1 bg-[#E3E9E6]" />
+      <div className="my-5 flex items-center gap-3 text-xs text-tenue">
+        <span className="h-px flex-1 bg-borde" />
         {google ? "Completa lo que falta" : "o completa tus datos"}
-        <span className="h-px flex-1 bg-[#E3E9E6]" />
+        <span className="h-px flex-1 bg-borde" />
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         <label className="block">
-          <span className="text-sm font-medium">Nombre</span>
-          <input
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-            placeholder="¿Cómo te llamas?"
-            className="mt-1 h-11 w-full rounded-xl border border-[#D5DDD9] px-3 text-[15px] outline-none focus:border-[#0E7C66]"
-          />
+          <span className="text-sm font-semibold">Nombre</span>
+          <input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="¿Cómo te llamas?" className={INPUT} />
         </label>
         <label className="block">
-          <span className="text-sm font-medium">Celular (para tu asistente de WhatsApp)</span>
+          <span className="text-sm font-semibold">Celular</span>
+          <span className="ml-1 text-xs text-tenue">para hablar con Porky por WhatsApp</span>
           <input
             value={celular}
             onChange={(e) => setCelular(e.target.value)}
             inputMode="tel"
             placeholder="999 000 000"
-            className="mt-1 h-11 w-full rounded-xl border border-[#D5DDD9] px-3 text-[15px] outline-none focus:border-[#0E7C66]"
+            className={INPUT}
           />
         </label>
         <fieldset>
-          <legend className="text-sm font-medium">¿Cómo son tus ingresos?</legend>
-          <div className="mt-1 grid grid-cols-2 gap-2">
+          <legend className="text-sm font-semibold">¿Cómo son tus ingresos?</legend>
+          <div className="mt-1.5 grid grid-cols-2 gap-1 rounded-2xl bg-fondo p-1">
             {(["fijo", "variable"] as const).map((t) => (
               <button
                 key={t}
                 type="button"
                 aria-pressed={tipo === t}
                 onClick={() => setTipo(t)}
-                className={`h-11 rounded-xl border text-[15px] font-medium ${
-                  tipo === t ? "border-[#0E7C66] bg-[#E6F4EF] text-[#0B5E4E]" : "border-[#D5DDD9]"
+                className={`h-10 rounded-xl text-[14px] font-semibold transition ${
+                  tipo === t ? "bg-white text-marca-700 shadow-suave" : "text-suave"
                 }`}
               >
                 {t === "fijo" ? "Fijos cada mes" : "Cambian cada mes"}
@@ -92,17 +120,20 @@ export function Registro() {
             ))}
           </div>
           {tipo === "variable" && (
-            <p className="mt-2 rounded-lg bg-[#FFF8EA] px-3 py-2 text-[13px] text-[#7A4B05]">
-              Perfecto: no te pediremos un monto fijo. Apartas lo que puedas, cuando puedas.
-            </p>
+            <div className="animar-subida mt-3 flex items-center gap-3 rounded-2xl bg-marca-50 p-3">
+              <Avatar id="porky" tam={36} />
+              <p className="text-[13px] leading-snug text-marca-700">
+                ¡Perfecto! No te pediremos un monto fijo. Apartas lo que puedas, cuando puedas.
+              </p>
+            </div>
           )}
         </fieldset>
-        <label className="flex items-start gap-2 pt-1 text-[13px] text-[#4F5F5A]">
+        <label className="flex items-start gap-2.5 text-[13px] text-suave">
           <input
             type="checkbox"
             checked={acepta}
             onChange={(e) => setAcepta(e.target.checked)}
-            className="mt-0.5 size-4 accent-[#0E7C66]"
+            className="mt-0.5 size-4 accent-marca"
           />
           Acepto el tratamiento de mis datos personales (Ley N.° 29733).
         </label>
@@ -112,11 +143,11 @@ export function Registro() {
         type="button"
         disabled={!listo}
         onClick={() => registrar(nombre)}
-        className="mt-6 h-12 rounded-xl bg-[#0E7C66] text-[15px] font-semibold text-white disabled:bg-[#B9C7C2]"
+        className="mt-6 h-12 rounded-2xl bg-marca text-[15px] font-semibold text-white transition active:scale-[0.99] disabled:bg-borde disabled:text-tenue"
       >
         Empezar a ahorrar
       </button>
-      <p className="mt-3 text-center text-[11px] text-[#8A9893]">
+      <p className="mt-3 text-center text-[11px] text-tenue">
         Prototipo: el acceso con Google y WhatsApp están simulados. Datos ficticios.
       </p>
     </div>
@@ -131,156 +162,178 @@ export function Inicio({ irA }: { irA: (t: Tab) => void }) {
   const nivel = nivelMascota(racha);
   const siguiente = NIVELES.find((x) => x.desde > racha);
   const semanaLista = n.semanas[n.semanas.length - 1];
+  const porReclamar = misionesPorReclamar(n.misiones);
+  const hechas = Object.values(n.misiones).filter((e) => e !== "pendiente").length;
   const [dato, setDato] = useState(0);
   const d = datos.datosDelDia[dato % datos.datosDelDia.length];
-  const { reto, beneficio } = datos;
+  const [hecho, meta] = datos.misiones.find((m) => m.id === "s-reto")?.progreso ?? [0, 1];
+  const reto = { titulo: "Reto del desayuno", progreso: hecho, meta };
 
   return (
-    <div className="space-y-4 px-5 pb-6 pt-4">
-      <header className="flex items-center justify-between">
-        <div>
-          <p className={`text-sm ${TEXTO_SUAVE}`}>Hola, {n.nombre} 👋</p>
-          <h1 className="text-xl font-bold tracking-tight">Tu nido de ahorro</h1>
+    <div className="space-y-4 px-5 pb-6 pt-3">
+      <header className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <span className="grid size-10 place-items-center rounded-full bg-marca-50 font-display text-lg font-semibold text-marca-700">
+            {n.nombre.charAt(0).toUpperCase()}
+          </span>
+          <div>
+            <p className="text-[13px] text-suave">Hola, {n.nombre}</p>
+            <h1 className="font-display text-xl font-semibold leading-tight">Tu nido de ahorro</h1>
+          </div>
         </div>
-        <span className="rounded-full bg-[#E6F4EF] px-3 py-1 text-xs font-medium text-[#0B5E4E]">
-          Ingreso variable
-        </span>
+        <button
+          type="button"
+          onClick={() => irA("misiones")}
+          aria-label={`${n.kapicoins} Kapicoins`}
+          className="relative flex h-10 items-center gap-1.5 rounded-full bg-white pl-1.5 pr-3 shadow-suave"
+        >
+          <Kapicoin tam={26} />
+          <span className="font-bold tabular-nums">{n.kapicoins}</span>
+          {porReclamar > 0 && (
+            <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-peligro text-[10px] font-bold text-white">
+              {porReclamar}
+            </span>
+          )}
+        </button>
       </header>
 
-      {/* Widget de racha y mascota */}
-      <section className="rounded-3xl bg-gradient-to-br from-[#0E7C66] to-[#0A5446] p-5 text-white shadow-lg">
-        <div className="flex items-center gap-4">
-          <div
-            className={`relative grid size-20 shrink-0 place-items-center rounded-full bg-white/15 transition ${
-              nivel.nivel === 3 ? "ring-4 ring-[#F5A524]" : ""
-            }`}
-          >
-            <span className={nivel.nivel === 1 ? "text-4xl" : "text-5xl"}>{nivel.emoji}</span>
-            {nivel.nivel === 3 && <span className="absolute -right-1 -top-2 text-xl">👑</span>}
-          </div>
+      {/* Widget: racha y mascota */}
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-marca to-marca-700 p-5 text-white shadow-suave">
+        <span className="pointer-events-none absolute -right-10 -top-12 size-44 rounded-full bg-white/[0.06]" />
+        <span className="pointer-events-none absolute -bottom-16 -left-10 size-40 rounded-full bg-white/[0.05]" />
+        <div className="relative flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-[11px] font-medium uppercase tracking-wider text-white/70">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-white/70">Racha semanal</p>
+            <p className="mt-1 flex items-center gap-1.5 whitespace-nowrap font-display text-[34px] font-semibold leading-none">
+              <Flame className="size-8 fill-kapifin text-kapifin" aria-hidden="true" />
+              {racha} semanas
+            </p>
+            <p className="mt-2 text-[13px] text-white/80">
               Nivel {nivel.nivel} · {nivel.nombre}
             </p>
-            <p className="mt-0.5 whitespace-nowrap text-[26px] font-bold leading-tight">🔥 {racha} semanas</p>
-            <p className="text-sm text-white/80">seguidas apartando algo</p>
+          </div>
+          <div className="relative shrink-0">
+            <Avatar
+              id="porky"
+              tam={78}
+              className={`transition ${nivel.nivel === 3 ? "ring-4 ring-kapifin" : "ring-4 ring-white/30"}`}
+            />
+            {nivel.nivel === 3 && (
+              <span className="absolute -right-1 -top-1 grid size-7 place-items-center rounded-full bg-kapifin text-kapifin-900 shadow">
+                <Crown className="size-4" aria-hidden="true" />
+              </span>
+            )}
           </div>
         </div>
 
-        <div className="mt-4 flex justify-between">
+        <div className="relative mt-4 flex justify-between">
           {n.semanas.map((s, i) => {
             const actual = i === n.semanas.length - 1;
             return (
               <div key={i} className="flex flex-col items-center gap-1">
                 <span
-                  className={`grid size-8 place-items-center rounded-full text-sm font-bold ${
-                    s
-                      ? "bg-[#F5A524] text-[#3B2600]"
-                      : actual
-                        ? "border-2 border-dashed border-white/60"
-                        : "bg-white/15"
+                  className={`grid size-9 place-items-center rounded-full ${
+                    s ? "bg-kapifin text-kapifin-900" : actual ? "border-2 border-dashed border-white/60" : "bg-white/15"
                   }`}
                 >
-                  {s ? "✓" : ""}
+                  {s && <Flame className="size-4 fill-current" aria-hidden="true" />}
                 </span>
-                <span className="text-[10px] text-white/70">{actual ? "Esta" : `S${i + 1}`}</span>
+                <span className="text-[10px] font-medium text-white/70">{actual ? "Esta" : `S${i + 1}`}</span>
               </div>
             );
           })}
         </div>
 
-        <p className="mt-3 rounded-xl bg-white/10 px-3 py-2 text-[13px]">
+        <p className="relative mt-4 rounded-2xl bg-white/10 px-3 py-2.5 text-[13px] leading-snug">
           {semanaLista
-            ? "✅ Semana asegurada. ¡La constancia vale más que el monto!"
+            ? "Semana asegurada. ¡La constancia vale más que el monto!"
             : "Aparta aunque sea S/ 1 antes del domingo y tu racha sigue viva."}
+          {siguiente && (
+            <span className="block text-white/70">
+              Te {siguiente.desde - racha === 1 ? "falta 1 semana" : `faltan ${siguiente.desde - racha} semanas`} para
+              ser {siguiente.nombre}.
+            </span>
+          )}
         </p>
-        {siguiente && (
-          <p className="mt-2 text-xs text-white/70">
-            Te {siguiente.desde - racha === 1 ? "falta 1 semana" : `faltan ${siguiente.desde - racha} semanas`} para
-            ser {siguiente.nombre}.
-          </p>
-        )}
       </section>
 
       {/* Dinero ahorrado */}
-      <section>
-        <p className={`text-sm ${TEXTO_SUAVE}`}>Llevas ahorrado</p>
-        <p className="text-4xl font-bold tracking-tight">{soles(n.saldoPrev + n.saldoEmer)}</p>
-        <div className="mt-3 grid grid-cols-2 gap-3">
-          <div className={TARJETA}>
-            <p className="text-xl">🛡️</p>
-            <p className={`mt-1 text-xs ${TEXTO_SUAVE}`}>Para tu yo de 65</p>
-            <p className="text-lg font-bold">{soles(n.saldoPrev)}</p>
-            <p className="text-[11px] text-[#8A9893]">Ahorro previsional</p>
+      <section className={TARJETA}>
+        <p className="text-[13px] font-medium text-suave">Llevas ahorrado</p>
+        <p className="mt-0.5 text-[40px] font-bold leading-tight tracking-tight tabular-nums">
+          {soles(n.saldoPrev + n.saldoEmer)}
+        </p>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <div className="rounded-2xl bg-marca-50 p-3">
+            <ShieldCheck className="size-5 text-marca" aria-hidden="true" />
+            <p className="mt-2 text-xs text-marca-700">Para tu yo de 65</p>
+            <p className="text-lg font-bold tabular-nums">{soles(n.saldoPrev)}</p>
           </div>
-          <div className={TARJETA}>
-            <p className="text-xl">☂️</p>
-            <p className={`mt-1 text-xs ${TEXTO_SUAVE}`}>Emergencias</p>
-            <p className="text-lg font-bold">{soles(n.saldoEmer)}</p>
-            <p className="text-[11px] text-[#8A9893]">Disponible cuando lo necesites</p>
+          <div className="rounded-2xl bg-fondo p-3">
+            <Umbrella className="size-5 text-suave" aria-hidden="true" />
+            <p className="mt-2 text-xs text-suave">Emergencias</p>
+            <p className="text-lg font-bold tabular-nums">{soles(n.saldoEmer)}</p>
           </div>
         </div>
         <button
           type="button"
           onClick={() => irA("chat")}
-          className="mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#0E7C66] text-[15px] font-semibold text-white"
+          className="mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-marca text-[15px] font-semibold text-white transition active:scale-[0.99]"
         >
-          💬 Registrar un ingreso por WhatsApp
+          <MessageCircle className="size-5" aria-hidden="true" />
+          Registrar un ingreso por WhatsApp
         </button>
       </section>
 
-      {/* Reto */}
-      <section className={TARJETA}>
-        <div className="flex items-start gap-3">
-          <span className="text-2xl">🎯</span>
-          <div className="flex-1">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#A8670A]">Reto de la semana</p>
-            <p className="font-semibold">{reto.titulo}</p>
-            <p className={`text-sm ${TEXTO_SUAVE}`}>{reto.detalle}</p>
+      {/* Bento: misiones y reto */}
+      <div className="grid grid-cols-2 gap-3">
+        <button type="button" onClick={() => irA("misiones")} className="rounded-3xl bg-kapifin-50 p-4 text-left shadow-suave">
+          <div className="flex items-center justify-between">
+            <Avatar id="kapifin" tam={36} />
+            <ChevronRight className="size-4 text-kapifin-900/60" aria-hidden="true" />
           </div>
+          <p className="mt-3 font-display text-[15px] font-semibold text-kapifin-900">Misiones</p>
+          <p className="text-xs text-kapifin-900/80">
+            {porReclamar > 0 ? `${porReclamar} por reclamar` : `${hechas} de ${datos.misiones.length} hechas`}
+          </p>
+        </button>
+        <div className="rounded-3xl bg-white p-4 shadow-suave">
+          <Target className="size-6 text-marca" aria-hidden="true" />
+          <p className="mt-3 font-display text-[15px] font-semibold leading-tight">{reto.titulo}</p>
+          <div className="mt-2 h-1.5 rounded-full bg-fondo">
+            <div className="h-1.5 rounded-full bg-marca" style={{ width: `${(reto.progreso / reto.meta) * 100}%` }} />
+          </div>
+          <p className="mt-1.5 text-xs text-suave">
+            {reto.progreso} de {reto.meta} días
+          </p>
         </div>
-        <div className="mt-3 h-2 rounded-full bg-[#EEF2F0]">
-          <div className="h-2 rounded-full bg-[#F5A524]" style={{ width: `${(reto.progreso / reto.meta) * 100}%` }} />
-        </div>
-        <p className={`mt-1.5 text-xs ${TEXTO_SUAVE}`}>
-          {reto.progreso} de {reto.meta} días · ahorro estimado {soles(reto.ahorroEstimado)}
-        </p>
-      </section>
+      </div>
 
       <Equipo />
 
-      {/* Dato del día */}
-      <section className="rounded-2xl bg-[#FFF8EA] p-4">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-[#A8670A]">💡 Dato del día</p>
-        <p className="mt-1 text-[15px] font-medium leading-snug">{d.texto}</p>
-        <div className="mt-2 flex items-center justify-between gap-2">
-          <p className="text-[11px] text-[#8A6A33]">{d.fuente}</p>
-          <button type="button" onClick={() => setDato(dato + 1)} className="shrink-0 text-sm font-semibold text-[#0E7C66]">
-            Otro dato →
-          </button>
-        </div>
-      </section>
-
-      {/* Beneficio */}
-      <section className={TARJETA}>
-        <div className="flex items-start gap-3">
-          <span className="text-2xl">🎁</span>
-          <div className="flex-1">
-            <p className="font-semibold">Beneficio por constancia</p>
-            <p className={`text-sm ${TEXTO_SUAVE}`}>
-              Llega a {beneficio.semanasMeta} semanas de racha y desbloquea {beneficio.detalle} en {beneficio.marca}.
-            </p>
+      {/* Dato del día con Sabiondo */}
+      <section className="rounded-3xl bg-sabiondo-50 p-4">
+        <div className="flex items-center gap-3">
+          <Avatar id="sabiondo" tam={40} />
+          <div>
+            <p className="font-display text-[15px] font-semibold text-sabiondo-700">Dato del día</p>
+            <p className="text-xs text-sabiondo-700/80">con Sabiondo</p>
           </div>
         </div>
-        <div className="mt-3 h-2 rounded-full bg-[#EEF2F0]">
-          <div
-            className="h-2 rounded-full bg-[#0E7C66]"
-            style={{ width: `${Math.min(1, racha / beneficio.semanasMeta) * 100}%` }}
-          />
+        <p className="mt-3 text-[15px] font-medium leading-snug">{d.texto}</p>
+        <div className="mt-3 flex items-end justify-between gap-3">
+          <p className="text-[11px] leading-snug text-suave">{d.fuente}</p>
+          <button
+            type="button"
+            onClick={() => {
+              setDato(dato + 1);
+              n.cumplirMision("dato");
+            }}
+            className="shrink-0 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-sabiondo-700 shadow-suave"
+          >
+            Otro dato
+          </button>
         </div>
-        <p className="mt-1.5 text-[11px] text-[#8A9893]">
-          {racha} de {beneficio.semanasMeta} semanas · marca ilustrativa para el prototipo
-        </p>
       </section>
     </div>
   );
@@ -289,42 +342,45 @@ export function Inicio({ irA }: { irA: (t: Tab) => void }) {
 function Equipo() {
   const [sel, setSel] = useState(0);
   const [idx, setIdx] = useState(0);
-  const p = datos.personajes[sel];
+  const id = EQUIPO[sel];
+  const p = personaje(id);
+  const t = tono(id);
 
   return (
     <section className={TARJETA}>
-      <div className="flex items-center justify-between">
-        <p className="font-semibold">Tu equipo</p>
-        <p className="text-xs text-[#8A9893]">Toca para un consejo</p>
+      <div className="flex items-baseline justify-between">
+        <p className="font-display text-lg font-semibold">Tu equipo</p>
+        <p className="text-xs text-tenue">4 amigos, 1 mismo objetivo</p>
       </div>
-      <div className="mt-3 flex gap-2">
-        {datos.personajes.map((x, i) => (
-          <button
-            key={x.id}
-            type="button"
-            aria-pressed={i === sel}
-            onClick={() => {
-              if (i === sel) setIdx(idx + 1);
-              else {
-                setSel(i);
-                setIdx(0);
-              }
-            }}
-            className={`flex flex-1 flex-col items-center gap-1 rounded-xl border p-2 ${
-              i === sel ? "border-[#0E7C66] bg-[#E6F4EF]" : "border-[#E3E9E6]"
-            }`}
-          >
-            <span className="text-3xl">{x.emoji}</span>
-            <span className="text-center text-[11px] font-medium leading-tight">{x.corto}</span>
-          </button>
-        ))}
+      <div className="mt-3 grid grid-cols-4 gap-2">
+        {EQUIPO.map((x, i) => {
+          const tx = TONOS[personaje(x).tono as keyof typeof TONOS];
+          return (
+            <button
+              key={x}
+              type="button"
+              aria-pressed={i === sel}
+              onClick={() => {
+                if (i === sel) setIdx(idx + 1);
+                else {
+                  setSel(i);
+                  setIdx(0);
+                }
+              }}
+              className={`flex flex-col items-center gap-1.5 rounded-2xl border-2 p-2 transition ${
+                i === sel ? `${tx.borde} ${tx.fondo}` : "border-transparent"
+              }`}
+            >
+              <Avatar id={x} tam={48} />
+              <span className="text-center text-[11px] font-semibold leading-tight">{personaje(x).nombre}</span>
+            </button>
+          );
+        })}
       </div>
-      <div className="mt-3 rounded-xl bg-[#F6F8F7] p-3">
-        <p className="text-sm font-semibold">
-          {p.nombre} <span className={`font-normal ${TEXTO_SUAVE}`}>· {p.rol}</span>
-        </p>
-        <p className="mt-1 text-sm italic">«{p.frase}»</p>
-        <p className="mt-2 text-sm">💡 {p.consejos[idx % p.consejos.length]}</p>
+      <div key={`${sel}-${idx}`} className={`animar-subida mt-3 rounded-2xl p-3 ${t.fondo}`}>
+        <p className={`font-display text-[15px] font-semibold ${t.texto}`}>{p.lema}</p>
+        <p className="mt-1 text-sm leading-snug">{p.consejos[idx % p.consejos.length]}</p>
+        <p className="mt-2 text-[11px] text-tenue">Toca de nuevo para otro consejo</p>
       </div>
     </section>
   );
@@ -426,9 +482,10 @@ export function Chat({ irA }: { irA: (t: Tab) => void }) {
             (r.subioRacha
               ? `\n\n🔥 Semana asegurada: tu racha sube a ${r.racha} semanas.`
               : "\n\n🔥 Tu semana ya estaba asegurada. ¡Esto suma igual!") +
-            (r.evoluciono ? "\n\n🐿️ ¡Tu ardilla evolucionó! Mírala en Inicio." : ""),
+            (r.evoluciono ? `\n\n🐷 ¡Subí de nivel! Ahora soy ${nivelMascota(r.racha).nombre}.` : "") +
+            "\n\n🎯 Kapifin dice: ¡cumpliste misiones! Reclama tus Kapicoins.",
           chips: [
-            { etiqueta: "Ver mi ardilla", ir: "inicio" },
+            { etiqueta: "Reclamar Kapicoins", ir: "misiones" },
             { etiqueta: "¿Cuánto tendré a los 65?", ir: "proyeccion" },
           ],
         },
@@ -446,27 +503,27 @@ export function Chat({ irA }: { irA: (t: Tab) => void }) {
   };
 
   return (
-    <div className="flex h-full flex-col bg-[#EFE7DE]">
-      <header className="flex shrink-0 items-center gap-3 bg-[#0A5446] px-3 py-2.5 text-white">
-        <button type="button" onClick={() => irA("inicio")} aria-label="Volver" className="px-1 text-xl">
-          ←
+    <div className="flex h-full flex-col bg-[#efe7de]">
+      <header className="flex shrink-0 items-center gap-3 bg-marca-700 px-3 py-2.5 text-white">
+        <button type="button" onClick={() => irA("inicio")} aria-label="Volver" className="-ml-1 p-1">
+          <ChevronLeft className="size-6" aria-hidden="true" />
         </button>
-        <div className="grid size-9 place-items-center rounded-full bg-white/15 text-lg">🐿️</div>
+        <Avatar id="porky" tam={38} className="ring-0" />
         <div className="min-w-0 flex-1">
-          <p className="font-semibold leading-tight">Nido · Asistente</p>
+          <p className="font-display text-[16px] font-semibold leading-tight">Porky Cash</p>
           <p className="text-xs text-white/70">{n.escribiendo ? "escribiendo…" : "en línea"}</p>
         </div>
-        <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide">
+        <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
           WhatsApp simulado
         </span>
       </header>
 
       <div className="min-h-0 flex-1 space-y-2 overflow-y-auto px-3 py-4">
         {n.chat.map((m) => (
-          <div key={m.id} className={`flex ${m.de === "juan" ? "justify-end" : "justify-start"}`}>
+          <div key={m.id} className={`animar-subida flex ${m.de === "juan" ? "justify-end" : "justify-start"}`}>
             <p
               className={`max-w-[85%] whitespace-pre-line rounded-2xl px-3 py-2 text-[14.5px] leading-snug shadow-sm ${
-                m.de === "juan" ? "rounded-br-sm bg-[#D9FDD3]" : "rounded-bl-sm bg-white"
+                m.de === "juan" ? "rounded-br-md bg-[#d9fdd3]" : "rounded-bl-md bg-white"
               }`}
             >
               {m.texto}
@@ -475,21 +532,21 @@ export function Chat({ irA }: { irA: (t: Tab) => void }) {
         ))}
         {n.escribiendo && (
           <div className="flex justify-start">
-            <p className="flex gap-1 rounded-2xl rounded-bl-sm bg-white px-4 py-3 shadow-sm" aria-label="Escribiendo">
-              <span className="size-2 animate-bounce rounded-full bg-[#9AA8A3]" />
-              <span className="size-2 animate-bounce rounded-full bg-[#9AA8A3] [animation-delay:120ms]" />
-              <span className="size-2 animate-bounce rounded-full bg-[#9AA8A3] [animation-delay:240ms]" />
+            <p className="flex gap-1 rounded-2xl rounded-bl-md bg-white px-4 py-3 shadow-sm" aria-label="Escribiendo">
+              <span className="size-2 animate-bounce rounded-full bg-tenue" />
+              <span className="size-2 animate-bounce rounded-full bg-tenue [animation-delay:120ms]" />
+              <span className="size-2 animate-bounce rounded-full bg-tenue [animation-delay:240ms]" />
             </p>
           </div>
         )}
         {ultimo?.de === "bot" && ultimo.chips && !n.escribiendo && (
-          <div className="flex flex-wrap gap-2 pt-1">
+          <div className="animar-subida flex flex-wrap gap-2 pt-1">
             {ultimo.chips.map((c) => (
               <button
                 key={c.etiqueta}
                 type="button"
                 onClick={() => tocarChip(c)}
-                className="rounded-full border border-[#0E7C66]/30 bg-white px-3 py-1.5 text-sm font-medium text-[#0B5E4E] shadow-sm active:bg-[#E6F4EF]"
+                className="rounded-full border border-marca/25 bg-white px-3.5 py-2 text-sm font-semibold text-marca-700 shadow-sm transition active:scale-[0.98]"
               >
                 {c.etiqueta}
               </button>
@@ -504,7 +561,7 @@ export function Chat({ irA }: { irA: (t: Tab) => void }) {
           e.preventDefault();
           enviar(texto);
         }}
-        className="flex shrink-0 gap-2 bg-[#F0F2F0] p-2"
+        className="flex shrink-0 gap-2 bg-[#f0f2f0] p-2"
       >
         <input
           value={texto}
@@ -513,15 +570,15 @@ export function Chat({ irA }: { irA: (t: Tab) => void }) {
           aria-label="Mensaje"
           className="h-11 min-w-0 flex-1 rounded-full bg-white px-4 text-[15px] outline-none"
         />
-        <button type="submit" aria-label="Enviar" className="grid size-11 shrink-0 place-items-center rounded-full bg-[#0E7C66] text-white">
-          ➤
+        <button type="submit" aria-label="Enviar" className="grid size-11 shrink-0 place-items-center rounded-full bg-marca text-white">
+          <Send className="size-5" aria-hidden="true" />
         </button>
       </form>
     </div>
   );
 }
 
-/* ───────────────────────── 4. Proyección ───────────────────────── */
+/* ───────────────────────── 4. Proyección (Sabiondo) ───────────────────────── */
 
 export function Proyeccion() {
   const n = useNido();
@@ -530,16 +587,16 @@ export function Proyeccion() {
   const menos = Math.round((1 - b.total / a.total) * 100);
 
   return (
-    <div className="space-y-4 px-5 pb-6 pt-4">
-      <h1 className="text-xl font-bold tracking-tight">¿Cuánto tendrías a los 65?</h1>
-      <Personaje id="guardian" texto="¡Cada aporte de hoy es una ayuda para tu yo del futuro! Mueve la barra y mira qué pasa." />
+    <div className="space-y-4 px-5 pb-6 pt-3">
+      <h1 className="font-display text-2xl font-semibold">¿Cuánto tendrías a los 65?</h1>
+      <Personaje id="sabiondo" texto="El tiempo es tu superpoder. Mueve la barra y mira cómo crece tu ahorro." />
 
       <section className={TARJETA}>
         <div className="flex items-baseline justify-between">
-          <label htmlFor="aporte" className="text-sm font-medium">
+          <label htmlFor="aporte" className="text-sm font-semibold">
             Aporte promedio al mes
           </label>
-          <span className="text-lg font-bold text-[#0B5E4E]">{soles(n.aporteMensual)}</span>
+          <span className="text-xl font-bold tabular-nums text-sabiondo-700">{soles(n.aporteMensual)}</span>
         </div>
         <input
           id="aporte"
@@ -549,21 +606,21 @@ export function Proyeccion() {
           step={5}
           value={n.aporteMensual}
           onChange={(e) => n.setAporteMensual(Number(e.target.value))}
-          className="mt-3 w-full accent-[#0E7C66]"
+          className="mt-3 w-full accent-sabiondo"
         />
-        <p className={`mt-1 text-xs ${TEXTO_SUAVE}`}>
+        <p className="mt-1 text-xs text-suave">
           Es un promedio: unos meses más, otros menos. Son ≈ {soles(round2(n.aporteMensual / 4.3))} por semana.
         </p>
-        <p className={`mt-4 text-xs font-medium ${TEXTO_SUAVE}`}>Rentabilidad anual supuesta (descontando inflación)</p>
-        <div className="mt-2 grid grid-cols-3 gap-2">
+        <p className="mt-4 text-xs font-semibold text-suave">Rentabilidad anual supuesta (descontando inflación)</p>
+        <div className="mt-2 grid grid-cols-3 gap-1 rounded-2xl bg-fondo p-1">
           {TASAS.map((t) => (
             <button
               key={t.nombre}
               type="button"
               aria-pressed={n.tasa === t.valor}
               onClick={() => n.setTasa(t.valor)}
-              className={`rounded-xl border py-2 text-sm ${
-                n.tasa === t.valor ? "border-[#0E7C66] bg-[#E6F4EF] font-semibold text-[#0B5E4E]" : "border-[#E3E9E6]"
+              className={`rounded-xl py-2 text-sm transition ${
+                n.tasa === t.valor ? "bg-white font-semibold text-sabiondo-700 shadow-suave" : "text-suave"
               }`}
             >
               {t.nombre}
@@ -573,22 +630,26 @@ export function Proyeccion() {
         </div>
       </section>
 
-      <section className="rounded-2xl bg-[#0E7C66] p-5 text-white">
-        <p className="text-sm text-white/80">Empezando a los 20, a los 65 tendrías</p>
-        <p className="text-4xl font-bold tracking-tight">{soles(a.total)}</p>
-        <p className="mt-2 text-sm text-white/85">
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sabiondo to-sabiondo-700 p-5 text-white shadow-suave">
+        <span className="pointer-events-none absolute -right-8 -top-10 size-36 rounded-full bg-white/[0.07]" />
+        <p className="relative text-sm text-white/80">Empezando a los 20, a los 65 tendrías</p>
+        <p className="relative mt-1 text-[40px] font-bold leading-tight tracking-tight tabular-nums">{soles(a.total)}</p>
+        <p className="relative mt-2 text-sm text-white/85">
           Tú aportas {soles(a.aportado)} y el interés compuesto suma {soles(a.total - a.aportado)}.
         </p>
       </section>
 
       <section className={TARJETA}>
         <Grafico aporte={n.aporteMensual} tasa={n.tasa} />
-        <p className="mt-3 rounded-xl bg-[#FFF8EA] p-3 text-sm text-[#5C3A04]">
-          ⏳ <b>El costo de esperar:</b> si empiezas a los 30, con el mismo aporte tendrías {soles(b.total)}, un {menos}% menos.
-        </p>
+        <div className="mt-3 flex gap-2.5 rounded-2xl bg-kapifin-50 p-3 text-sm text-kapifin-900">
+          <Hourglass className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+          <p>
+            <b>El costo de esperar:</b> si empiezas a los 30, con el mismo aporte tendrías {soles(b.total)}, un {menos}% menos.
+          </p>
+        </div>
       </section>
 
-      <p className="text-[11px] leading-snug text-[#8A9893]">
+      <p className="text-[11px] leading-snug text-tenue">
         Proyección ilustrativa en soles de hoy. Supone aportes constantes y una rentabilidad fija; no garantiza resultados.
         Las rentabilidades reales varían y pueden ser negativas en algunos años.
       </p>
@@ -596,7 +657,7 @@ export function Proyeccion() {
   );
 }
 
-/* ───────────────────────── 5. Mi futuro ───────────────────────── */
+/* ───────────────────────── 5. Mi meta (Monedina) ───────────────────────── */
 
 export function Futuro({ irWeb }: { irWeb: () => void }) {
   const n = useNido();
@@ -605,51 +666,64 @@ export function Futuro({ irWeb }: { irWeb: () => void }) {
   const aportes = n.movimientos.filter((m) => m.tipo === "aporte").length;
 
   return (
-    <div className="space-y-4 px-5 pb-6 pt-4">
-      <section className="rounded-3xl bg-gradient-to-b from-[#FFF1D6] to-white p-6 text-center">
-        <div className="mx-auto grid size-24 place-items-center rounded-full bg-white text-6xl shadow">👴</div>
-        <p className="mt-3 text-[11px] font-semibold uppercase tracking-wider text-[#A8670A]">
-          Don Futuro · {n.nombre} a los 65
-        </p>
-        <p className="mt-2 text-lg font-semibold leading-snug">
-          «¿Qué decisiones estás tomando hoy para que yo pueda vivir con tranquilidad mañana?»
-        </p>
-        <p className={`mt-2 text-sm ${TEXTO_SUAVE}`}>
-          {racha >= 6
-            ? `¡Gracias por no olvidarme estas ${racha} semanas! Así se construye mi tranquilidad.`
-            : "Cada semana que apartas algo, me acerco a una vejez tranquila."}
-        </p>
+    <div className="space-y-4 px-5 pb-6 pt-3">
+      <section className="relative overflow-hidden rounded-3xl bg-monedina-50 shadow-suave">
+        <div className="flex items-end">
+          <div className="min-w-0 flex-1 p-5 pr-0">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-monedina-700">Tu meta con Monedina</p>
+            <h1 className="mt-1 font-display text-2xl font-semibold leading-tight">{n.nombre} a los 65</h1>
+            <p className="mt-2 text-[14px] leading-snug">«¿Qué decisiones tomas hoy para que tu yo de 65 viva tranquilo?»</p>
+          </div>
+          <Image
+            src="/personajes/monedina.webp"
+            alt="Monedina"
+            width={120}
+            height={169}
+            className="h-[169px] w-[120px] shrink-0 object-cover object-top mix-blend-multiply"
+          />
+        </div>
       </section>
 
       <section className={TARJETA}>
-        <p className={`text-sm ${TEXTO_SUAVE}`}>Si mantienes {soles(n.aporteMensual)} al mes en promedio, a los 65 tendrías</p>
-        <p className="text-3xl font-bold tracking-tight">{soles(a.total)}</p>
-        <p className={`text-sm ${TEXTO_SUAVE}`}>Equivale a ≈ {soles(Math.round(a.total / 240))} al mes durante 20 años*</p>
+        <p className="text-sm text-suave">Si mantienes {soles(n.aporteMensual)} al mes en promedio, a los 65 tendrías</p>
+        <p className="mt-1 text-[36px] font-bold leading-tight tracking-tight tabular-nums text-monedina-700">{soles(a.total)}</p>
+        <p className="text-sm text-suave">Equivale a ≈ {soles(Math.round(a.total / 240))} al mes durante 20 años*</p>
+        <p className="mt-3 rounded-2xl bg-monedina-50 px-3 py-2.5 text-[13px] text-monedina-700">
+          {racha >= 6
+            ? `¡Gracias por no olvidarme estas ${racha} semanas! Así se construye tu tranquilidad.`
+            : "Cada semana que apartas algo, te acercas a una vejez tranquila."}
+        </p>
       </section>
 
       <section className="grid grid-cols-3 gap-2 text-center">
         <div className={TARJETA}>
-          <p className="text-2xl font-bold">🔥 {racha}</p>
-          <p className={`text-[11px] ${TEXTO_SUAVE}`}>semanas de racha</p>
+          <Flame className="mx-auto size-5 fill-kapifin text-kapifin" aria-hidden="true" />
+          <p className="mt-1 text-xl font-bold tabular-nums">{racha}</p>
+          <p className="text-[11px] text-suave">semanas de racha</p>
         </div>
         <div className={TARJETA}>
-          <p className="text-2xl font-bold">{aportes}</p>
-          <p className={`text-[11px] ${TEXTO_SUAVE}`}>aportes hechos</p>
+          <PiggyBank className="mx-auto size-5 text-marca" aria-hidden="true" />
+          <p className="mt-1 text-xl font-bold tabular-nums">{aportes}</p>
+          <p className="text-[11px] text-suave">aportes hechos</p>
         </div>
         <div className={TARJETA}>
-          <p className="text-lg font-bold leading-8">{soles(n.saldoPrev)}</p>
-          <p className={`text-[11px] ${TEXTO_SUAVE}`}>para tu yo de 65</p>
+          <span className="mx-auto block w-fit">
+            <Kapicoin tam={20} />
+          </span>
+          <p className="mt-1 text-xl font-bold tabular-nums">{n.kapicoins}</p>
+          <p className="text-[11px] text-suave">Kapicoins</p>
         </div>
       </section>
 
       <button
         type="button"
         onClick={irWeb}
-        className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#13201C] text-[15px] font-semibold text-white"
+        className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-tinta text-[15px] font-semibold text-white transition active:scale-[0.99]"
       >
-        💻 Continuar en la versión web
+        <Laptop className="size-5" aria-hidden="true" />
+        Continuar en la versión web
       </button>
-      <p className="text-[11px] leading-snug text-[#8A9893]">
+      <p className="text-[11px] leading-snug text-tenue">
         *Ilustrativo: divide el capital proyectado entre 240 meses, sin rentabilidad durante el retiro ni comisiones.
       </p>
     </div>
