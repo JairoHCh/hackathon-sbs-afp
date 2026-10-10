@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Check, Lock } from "lucide-react";
 import datos from "@/data/datos.json";
-import { ICONOS, Kapicoin, Personaje } from "@/components/comunes";
-import { useNido } from "@/components/estado";
+import { soles } from "@/lib/finanzas";
+import { cuerpo, ICONOS, Kapicoin } from "@/components/comunes";
+import { misionesPorReclamar, useNido, valorMetrica } from "@/components/estado";
 
 type Mision = (typeof datos.misiones)[number];
 
@@ -22,7 +24,7 @@ export function Misiones() {
         </span>
       </header>
 
-      <Personaje id="kapifin" texto="Organiza hoy, logra mañana. Cumple misiones, gana Kapicoins y canjéalas en la tienda." />
+      <PortadaKapifin />
 
       <div className="grid grid-cols-2 gap-1 rounded-2xl bg-white p-1 shadow-suave" role="tablist">
         {(["misiones", "tienda"] as const).map((v) => (
@@ -50,6 +52,46 @@ export function Misiones() {
         <Tienda />
       )}
     </div>
+  );
+}
+
+// Kapifin cambia de pose según tu avance: sorprendido si hay premios, feliz si vas al día.
+function PortadaKapifin() {
+  const n = useNido();
+  const porReclamar = misionesPorReclamar(n.misiones);
+  const pendientes = Object.values(n.misiones).filter((e) => e === "pendiente").length;
+  const { pose, titulo, texto } =
+    porReclamar > 0
+      ? { pose: "sorprendido", titulo: "¡Tienes premios!", texto: `${porReclamar} ${porReclamar === 1 ? "misión lista" : "misiones listas"} para reclamar.` }
+      : pendientes === 0
+        ? { pose: "feliz", titulo: "¡Vas al día!", texto: "Completaste todas tus misiones. ¡Las metas también se celebran!" }
+        : { pose: "seguro", titulo: "Organiza hoy, logra mañana", texto: "Cumple misiones, gana Kapicoins y canjéalas en la tienda." };
+  const img = cuerpo("kapifin", pose);
+
+  return (
+    <section className="relative overflow-hidden rounded-3xl bg-kapifin-50 shadow-suave">
+      <div className="flex items-end">
+        <div className="min-w-0 flex-1 p-4 pr-0">
+          <p className="font-display text-lg font-semibold leading-tight text-kapifin-900">{titulo}</p>
+          <p className="mt-1 text-[13px] leading-snug text-kapifin-900/80">{texto}</p>
+          <button
+            type="button"
+            onClick={() => n.abrirLeccion("kapifin")}
+            className="mt-3 rounded-full bg-white px-3 py-1.5 text-[13px] font-semibold text-kapifin-900 shadow-suave"
+          >
+            ¿Cómo me organizo?
+          </button>
+        </div>
+        <Image
+          key={pose}
+          src={img.src}
+          alt={`Kapifin ${pose}`}
+          width={img.ancho}
+          height={img.alto}
+          className="animar-mascota desvanecer-bordes h-[150px] w-auto shrink-0 object-contain mix-blend-multiply"
+        />
+      </div>
+    </section>
   );
 }
 
@@ -82,19 +124,7 @@ function Grupo({ titulo, nota, lista }: { titulo: string; nota: string; lista: M
               <div className="min-w-0 flex-1">
                 <p className="text-[14px] font-semibold leading-tight">{m.titulo}</p>
                 <p className="mt-0.5 text-xs text-suave">{m.detalle}</p>
-                {m.progreso && estado === "pendiente" && (
-                  <div className="mt-1.5 flex items-center gap-2">
-                    <div className="h-1.5 flex-1 rounded-full bg-fondo">
-                      <div
-                        className="h-1.5 rounded-full bg-kapifin"
-                        style={{ width: `${(m.progreso[0] / m.progreso[1]) * 100}%` }}
-                      />
-                    </div>
-                    <span className="text-[11px] font-semibold tabular-nums text-suave">
-                      {m.progreso[0]}/{m.progreso[1]}
-                    </span>
-                  </div>
-                )}
+                {estado === "pendiente" && <Progreso mision={m} />}
               </div>
               {estado === "lista" ? (
                 <button
@@ -120,6 +150,34 @@ function Grupo({ titulo, nota, lista }: { titulo: string; nota: string; lista: M
         })}
       </ul>
     </section>
+  );
+}
+
+// Barra de avance para misiones con progreso fijo (reto) o medidas por métrica (redondeos).
+function Progreso({ mision: m }: { mision: Mision }) {
+  const { redondeo } = useNido();
+  let actual: number;
+  let meta: number;
+  let etiqueta: string;
+  if (m.metrica && m.objetivo !== null) {
+    actual = valorMetrica(redondeo, m.metrica);
+    meta = m.objetivo;
+    etiqueta = m.metrica.startsWith("ahorro")
+      ? `${soles(Math.min(actual, meta))} de ${soles(meta)}`
+      : `${Math.min(actual, meta)}/${meta}`;
+  } else if (m.progreso) {
+    [actual, meta] = m.progreso;
+    etiqueta = `${actual}/${meta}`;
+  } else {
+    return null;
+  }
+  return (
+    <div className="mt-1.5 flex items-center gap-2">
+      <div className="h-1.5 flex-1 rounded-full bg-fondo">
+        <div className="h-1.5 rounded-full bg-kapifin transition-all duration-500" style={{ width: `${Math.min(1, actual / meta) * 100}%` }} />
+      </div>
+      <span className="shrink-0 text-[11px] font-semibold tabular-nums text-suave">{etiqueta}</span>
+    </div>
   );
 }
 

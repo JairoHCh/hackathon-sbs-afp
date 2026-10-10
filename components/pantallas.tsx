@@ -6,6 +6,7 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
+  Coins,
   Crown,
   Flame,
   Hourglass,
@@ -14,7 +15,6 @@ import {
   PiggyBank,
   Send,
   ShieldCheck,
-  Target,
   Umbrella,
 } from "lucide-react";
 import datos from "@/data/datos.json";
@@ -24,6 +24,7 @@ import {
   GoogleG,
   Grafico,
   Kapicoin,
+  Logo,
   Personaje,
   TONOS,
   personaje,
@@ -59,13 +60,17 @@ export function Registro() {
   return (
     <div className="flex min-h-full flex-col bg-white px-6 pb-6 pt-8">
       <div className="flex flex-col items-center text-center">
-        <div className="flex -space-x-3">
-          {EQUIPO.map((id) => (
-            <Avatar key={id} id={id} tam={56} className="shadow-suave" />
-          ))}
+        <Logo tam={104} className="drop-shadow-xl" />
+        <h1 className="sr-only">{datos.app.nombre}</h1>
+        <p className="mt-4 text-[15px] text-suave">{datos.app.lema}</p>
+        <div className="mt-3 flex items-center gap-2">
+          <div className="flex -space-x-2">
+            {EQUIPO.map((id) => (
+              <Avatar key={id} id={id} tam={30} />
+            ))}
+          </div>
+          <span className="text-xs text-tenue">4 amigos, 1 mismo objetivo</span>
         </div>
-        <h1 className="mt-4 font-display text-4xl font-semibold text-marca-700">{datos.app.nombre}</h1>
-        <p className="mt-1 text-[15px] text-suave">{datos.app.lema}</p>
       </div>
 
       <button
@@ -166,8 +171,6 @@ export function Inicio({ irA }: { irA: (t: Tab) => void }) {
   const hechas = Object.values(n.misiones).filter((e) => e !== "pendiente").length;
   const [dato, setDato] = useState(0);
   const d = datos.datosDelDia[dato % datos.datosDelDia.length];
-  const [hecho, meta] = datos.misiones.find((m) => m.id === "s-reto")?.progreso ?? [0, 1];
-  const reto = { titulo: "Reto del desayuno", progreso: hecho, meta };
 
   return (
     <div className="space-y-4 px-5 pb-6 pt-3">
@@ -290,7 +293,7 @@ export function Inicio({ irA }: { irA: (t: Tab) => void }) {
         </button>
       </section>
 
-      {/* Bento: misiones y reto */}
+      {/* Bento: misiones y redondeo */}
       <div className="grid grid-cols-2 gap-3">
         <button type="button" onClick={() => irA("misiones")} className="rounded-3xl bg-kapifin-50 p-4 text-left shadow-suave">
           <div className="flex items-center justify-between">
@@ -302,16 +305,30 @@ export function Inicio({ irA }: { irA: (t: Tab) => void }) {
             {porReclamar > 0 ? `${porReclamar} por reclamar` : `${hechas} de ${datos.misiones.length} hechas`}
           </p>
         </button>
-        <div className="rounded-3xl bg-white p-4 shadow-suave">
-          <Target className="size-6 text-marca" aria-hidden="true" />
-          <p className="mt-3 font-display text-[15px] font-semibold leading-tight">{reto.titulo}</p>
-          <div className="mt-2 h-1.5 rounded-full bg-fondo">
-            <div className="h-1.5 rounded-full bg-marca" style={{ width: `${(reto.progreso / reto.meta) * 100}%` }} />
+        <button
+          type="button"
+          onClick={() => irA("redondeo")}
+          className="rounded-3xl bg-monedina-50 p-4 text-left shadow-suave"
+        >
+          <div className="flex items-center justify-between">
+            <span className="grid size-9 place-items-center rounded-full bg-white text-monedina-700">
+              <Coins className="size-5" aria-hidden="true" />
+            </span>
+            <span
+              className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
+                n.redondeo.activo ? "bg-monedina text-white" : "bg-white text-tenue"
+              }`}
+            >
+              {n.redondeo.activo ? "Activo" : "Apagado"}
+            </span>
           </div>
-          <p className="mt-1.5 text-xs text-suave">
-            {reto.progreso} de {reto.meta} días
+          <p className="mt-3 font-display text-[15px] font-semibold text-monedina-700">Redondeo ahorrativo</p>
+          <p className="text-xs text-monedina-700/80">
+            {n.redondeo.activo
+              ? `${soles(n.redondeo.ahorroSemana)} esta semana`
+              : "Ahorra al comprar"}
           </p>
-        </div>
+        </button>
       </div>
 
       <Equipo />
@@ -389,7 +406,7 @@ function Equipo() {
 
 /* ───────────────────────── 3. WhatsApp (simulado) ───────────────────────── */
 
-type Respuesta = { texto: string; chips?: Chip[] };
+type Respuesta = { texto: string; chips?: Chip[]; despues?: () => void };
 
 export function Chat({ irA }: { irA: (t: Tab) => void }) {
   const n = useNido();
@@ -401,7 +418,7 @@ export function Chat({ irA }: { irA: (t: Tab) => void }) {
     finRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [n.chat.length, n.escribiendo]);
 
-  const responderLuego = (r: Respuesta, despues?: () => void) => {
+  const responderLuego = (r: Respuesta, despues = r.despues) => {
     n.setEscribiendo(true);
     setTimeout(() => {
       n.setEscribiendo(false);
@@ -421,7 +438,7 @@ export function Chat({ irA }: { irA: (t: Tab) => void }) {
     const m = t.replace(",", ".").match(/\d+(\.\d+)?/);
     if (!m) {
       return {
-        texto: "No encontré un monto 🤔 Prueba con algo como «Hoy recibí 350 soles» o «Gasté 6 en desayuno».",
+        texto: "No encontré un monto 🤔 Prueba con algo como «Hoy recibí 350 soles» o «Gasté 4.50 en desayuno».",
         chips: SUGERENCIAS,
       };
     }
@@ -429,6 +446,29 @@ export function Chat({ irA }: { irA: (t: Tab) => void }) {
 
     if (/gast|pagu|compr/i.test(t)) {
       n.registrarMov("gasto", t, monto);
+
+      // Con el redondeo ahorrativo activo, el ahorro se aparta solo.
+      if (n.redondeo.activo) {
+        const r = n.redondearGasto(monto, t);
+        if (r.ahorro <= 0) {
+          return {
+            texto: `Anotado: gasto de ${soles(monto)}. Es un monto exacto para tu redondeo de ${soles(n.redondeo.base)}, así que esta vez no hubo redondeo.`,
+            chips: SUGERENCIAS.slice(0, 2),
+          };
+        }
+        return {
+          texto:
+            `Anotado: gasto de ${soles(monto)}.\n\n🪙 Redondeo ahorrativo (a ${soles(n.redondeo.base)}): se cuenta como ${soles(r.contado)} y aparté ${soles(r.ahorro)} para tu yo de 65.` +
+            (r.subioRacha ? `\n\n🔥 Semana asegurada: tu racha sube a ${r.racha} semanas.` : "") +
+            (r.evoluciono ? `\n\n🐱 ¡Monedina subió de nivel! Ahora es ${nivelMascota(r.racha).nombre}.` : ""),
+          chips: [
+            { etiqueta: "Ver mis redondeos", ir: "redondeo" },
+            { etiqueta: "Reclamar Kapicoins", ir: "misiones" },
+          ],
+          despues: r.evoluciono ? () => n.celebrar(nivelMascota(r.racha).nombre) : undefined,
+        };
+      }
+
       const redondeo = round2(Math.ceil(monto) - monto);
       const apartar = redondeo > 0 ? redondeo : datos.regla.minimo;
       let r =
@@ -442,6 +482,7 @@ export function Chat({ irA }: { irA: (t: Tab) => void }) {
         texto: r,
         chips: [
           { etiqueta: `Sí, aparta ${soles(apartar)}`, aporte: { prev: apartar, emer: 0, motivo: "Redondeo de gasto" } },
+          { etiqueta: "Redondear siempre", ir: "redondeo" },
           { etiqueta: "Ahora no", rechazo: true },
         ],
       };

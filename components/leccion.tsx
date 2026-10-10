@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ArrowRight, Check, X } from "lucide-react";
 import lecciones from "@/data/lecciones.json";
-import { Avatar, CUERPOS, Kapicoin, personaje, tono, type IdPersonaje } from "@/components/comunes";
+import { Avatar, cuerpo, Kapicoin, personaje, tono, type IdPersonaje } from "@/components/comunes";
 import { useNido, type Tab } from "@/components/estado";
 
 type Paso = {
@@ -13,13 +13,14 @@ type Paso = {
   nota?: string;
   boton?: string;
   equipo?: boolean;
+  pose?: string;
   pregunta?: string;
   opciones?: string[];
   correcta?: number;
   bien?: string;
   mal?: string;
 };
-type Guion = { cta: { texto: string; ir: string }; pasos: Paso[] };
+type Guion = { cta: { texto: string; ir: string }; pasos: Paso[]; poseFinal?: string };
 
 const GUIONES = lecciones as unknown as Record<IdPersonaje, Guion>;
 const EQUIPO: IdPersonaje[] = ["kapifin", "porky", "sabiondo", "monedina"];
@@ -27,16 +28,16 @@ const EQUIPO: IdPersonaje[] = ["kapifin", "porky", "sabiondo", "monedina"];
 // Pantalla completa en la que un personaje explica su tema paso a paso.
 export function Leccion({ id, irA }: { id: IdPersonaje; irA: (t: Tab) => void }) {
   const n = useNido();
-  const { cta, pasos } = GUIONES[id];
+  const { cta, pasos, poseFinal } = GUIONES[id];
   const p = personaje(id);
   const t = tono(id);
-  const cuerpo = CUERPOS[id];
   const [paso, setPaso] = useState(0);
   const [respuesta, setRespuesta] = useState<number | null>(null);
   const [misionNueva, setMisionNueva] = useState(false);
 
   const fin = paso >= pasos.length;
   const actual = pasos[paso];
+  const ilustracion = cuerpo(id, fin ? poseFinal : actual.pose);
   const esPregunta = !fin && actual.pregunta !== undefined;
   const cerrar = n.cerrarLeccion;
 
@@ -105,11 +106,11 @@ export function Leccion({ id, irA }: { id: IdPersonaje; irA: (t: Tab) => void })
         <span className="absolute bottom-2 left-1/2 h-10 w-48 -translate-x-1/2 rounded-[50%] bg-tinta/10 blur-md" />
         <div className="flotar absolute inset-x-0 bottom-4 top-2 flex justify-center">
           <Image
-            key={paso}
-            src={`/personajes/${id}.webp`}
+            key={ilustracion.src + paso}
+            src={ilustracion.src}
             alt={p.nombre}
-            width={cuerpo.ancho}
-            height={cuerpo.alto}
+            width={ilustracion.ancho}
+            height={ilustracion.alto}
             priority
             className="animar-mascota desvanecer-bordes h-full max-h-[360px] w-auto self-end object-contain mix-blend-multiply"
           />

@@ -1,40 +1,52 @@
 {
-  "_nota": "Guiones oficiales del equipo (GUION_personajes.docx). 'boton' es el texto del botón para avanzar, 'nota' es el segundo globo del personaje y un paso con 'pregunta' se muestra como mini reto.",
+  "_nota": "Guiones oficiales del equipo (GUION_personajes.docx). 'boton' es el texto del botón para avanzar, 'nota' es el segundo globo del personaje y un paso con 'pregunta' se muestra como mini reto. 'pose' elige una ilustración distinta del personaje para ese paso (por ahora solo Kapifin).",
   "kapifin": {
-    "cta": { "texto": "Ir a mis misiones", "ir": "misiones" },
+    "cta": {
+      "texto": "Ir a mis misiones",
+      "ir": "misiones"
+    },
     "pasos": [
       {
         "titulo": "¡Hola, equipo! Soy Kapifin.",
         "texto": "¡Bienvenido a la app! Soy el líder de este equipo y te acompañaré en cada paso de tu camino financiero. Junto a mis amigos aprenderás a planificar, ahorrar y avanzar hacia tus metas. ¿Listo para empezar?",
-        "boton": "¡Conozcamos al equipo!"
+        "boton": "¡Conozcamos al equipo!",
+        "pose": "saludo"
       },
       {
         "titulo": "4 amigos, 1 mismo objetivo.",
         "texto": "Porky Cash te ayudará a pensar en tu futuro y en tu jubilación. Sabiondo te enseñará cómo funcionan inversiones como los bonos. Monedina te mostrará cómo convertir el ahorro en un hábito. ¿Y yo? Yo me encargo de que todo tenga un orden: ¡sin plan, no hay meta!",
         "equipo": true,
-        "boton": "¿Por dónde empiezo?"
+        "boton": "¿Por dónde empiezo?",
+        "pose": "seguro"
       },
       {
         "titulo": "Primero, ordena tu dinero.",
         "texto": "Antes de ahorrar o invertir, necesitas saber cuánto dinero recibes y en qué lo gastas. Anota tus ingresos y separa tus gastos en esenciales —como alimentación, vivienda y transporte— y no esenciales.",
         "nota": "Una referencia útil es la regla 50/30/20: 50% para necesidades, 30% para gustos y 20% para ahorro o pago de deudas. No es una regla fija: adáptala a tu realidad.",
-        "boton": "¿Y cómo defino mis metas?"
+        "boton": "¿Y cómo defino mis metas?",
+        "pose": "curioso"
       },
       {
         "titulo": "Ponle nombre, monto y fecha a tus metas.",
         "texto": "Una meta clara es más fácil de alcanzar. En vez de decir “quiero ahorrar”, di “quiero juntar S/ 1,200 en 12 meses para un curso”. Así sabrás que necesitas separar S/ 100 cada mes.",
         "nota": "Revisa tu progreso con frecuencia y ajusta tu plan si cambian tus ingresos o tus prioridades.",
-        "boton": "Planifica, ahorra, avanza"
+        "boton": "Planifica, ahorra, avanza",
+        "pose": "dudoso"
       },
       {
         "titulo": "¡Juntos llegamos más lejos!",
         "texto": "En la app encontrarás misiones con cada uno de mis amigos. Complétalas, mira cómo avanza tu barra de progreso y celebra tus logros. ¡Tu futuro financiero también se construye hoy!",
-        "boton": "¡Empezar mi primera misión!"
+        "boton": "¡Empezar mi primera misión!",
+        "pose": "feliz"
       }
-    ]
+    ],
+    "poseFinal": "motivado"
   },
   "porky": {
-    "cta": { "texto": "Ir a mis misiones", "ir": "misiones" },
+    "cta": {
+      "texto": "Ir a mis misiones",
+      "ir": "misiones"
+    },
     "pasos": [
       {
         "titulo": "¡Mucho gusto! Soy Porky Cash.",
@@ -61,7 +73,10 @@
     ]
   },
   "sabiondo": {
-    "cta": { "texto": "Ver cómo crece mi ahorro", "ir": "proyeccion" },
+    "cta": {
+      "texto": "Ver cómo crece mi ahorro",
+      "ir": "proyeccion"
+    },
     "pasos": [
       {
         "titulo": "¡Un placer! Soy Sabiondo.",
@@ -88,7 +103,11 @@
       {
         "titulo": "Pon a prueba tus conocimientos",
         "pregunta": "Un bono tiene un valor nominal de S/ 1,000 y una tasa cupón anual del 6%. Si se cumplen sus condiciones, ¿cuánto pagaría de intereses en un año?",
-        "opciones": ["S/ 6", "S/ 60", "S/ 600"],
+        "opciones": [
+          "S/ 6",
+          "S/ 60",
+          "S/ 600"
+        ],
         "correcta": 1,
         "bien": "¡Correcto! El 6% de S/ 1,000 son S/ 60 al año, siempre que el emisor cumpla sus condiciones.",
         "mal": "Revisa: el 6% de S/ 1,000 es S/ 60 al año, si el emisor cumple sus condiciones.",
@@ -97,7 +116,10 @@
     ]
   },
   "monedina": {
-    "cta": { "texto": "Crear mi plan de ahorro", "ir": "proyeccion" },
+    "cta": {
+      "texto": "Crear mi plan de ahorro",
+      "ir": "proyeccion"
+    },
     "pasos": [
       {
         "titulo": "¡Hola! Soy Monedina.",

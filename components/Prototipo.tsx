@@ -2,12 +2,23 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Flag, House, Laptop, MessageCircle, Smartphone, Target, TrendingUp, type LucideIcon } from "lucide-react";
-import { Kapicoin } from "@/components/comunes";
+import {
+  Flag,
+  House,
+  Laptop,
+  MessageCircle,
+  PiggyBank,
+  Smartphone,
+  Target,
+  TrendingUp,
+  type LucideIcon,
+} from "lucide-react";
+import { Kapicoin, Logo } from "@/components/comunes";
 import { calcularRacha, misionesPorReclamar, ProveedorNido, useNido, type Tab } from "@/components/estado";
 import { Leccion } from "@/components/leccion";
 import { Misiones } from "@/components/misiones";
 import { Chat, Futuro, Inicio, Proyeccion, Registro } from "@/components/pantallas";
+import { PantallaRedondeo } from "@/components/redondeo";
 import { VistaWeb } from "@/components/web";
 
 const PESTANAS: { id: Tab; icono: LucideIcon; texto: string }[] = [
@@ -32,9 +43,12 @@ function Contenido() {
   return (
     <div className="min-h-dvh bg-lienzo">
       <div className="hidden items-center justify-center gap-4 pt-5 sm:flex">
-        <p className="text-sm text-suave">
-          <b className="font-display text-base text-marca-700">Nido</b> · prototipo para la Hackatón de Educación
-          Financiera 2026
+        <p className="flex items-center gap-2 text-sm text-suave">
+          <Logo tam={28} />
+          <span>
+            <b className="font-display text-base text-marca-700">Nido</b> · prototipo para la Hackatón de Educación
+            Financiera 2026
+          </span>
         </p>
         <div className="flex rounded-full bg-white p-1 shadow-suave">
           {(["movil", "web"] as const).map((v) => {
@@ -98,6 +112,7 @@ function Telefono({ irWeb }: { irWeb: () => void }) {
             {tab === "misiones" && <Misiones />}
             {tab === "proyeccion" && <Proyeccion />}
             {tab === "futuro" && <Futuro irWeb={irWeb} />}
+            {tab === "redondeo" && <PantallaRedondeo irA={irA} />}
           </div>
         )}
       </div>
@@ -105,7 +120,7 @@ function Telefono({ irWeb }: { irWeb: () => void }) {
       {n.registrado && (
         <nav className="grid shrink-0 grid-cols-5 border-t border-borde bg-white px-1 pb-[env(safe-area-inset-bottom)]">
           {PESTANAS.map((p) => {
-            const activa = tab === p.id;
+            const activa = tab === p.id || (tab === "redondeo" && p.id === "inicio");
             return (
               <button
                 key={p.id}
@@ -148,7 +163,11 @@ function Telefono({ irWeb }: { irWeb: () => void }) {
           role="status"
           className="animar-subida pointer-events-none absolute inset-x-0 top-12 z-50 mx-auto flex w-fit items-center gap-2 rounded-full bg-tinta px-4 py-2.5 text-sm font-semibold text-white shadow-2xl"
         >
-          <Kapicoin tam={20} />
+          {n.aviso.tipo === "ahorro" ? (
+            <PiggyBank className="size-5 text-kapifin" aria-hidden="true" />
+          ) : (
+            <Kapicoin tam={20} />
+          )}
           {n.aviso.texto}
         </div>
       )}
@@ -156,7 +175,7 @@ function Telefono({ irWeb }: { irWeb: () => void }) {
       {n.celebracion && (
         <div role="dialog" aria-modal="true" className="absolute inset-0 z-20 grid place-items-center bg-tinta/50 p-6">
           <div className="animar-subida w-full overflow-hidden rounded-3xl bg-white text-center shadow-2xl">
-            <div className="bg-gradient-to-b from-marca-50 to-white pt-5">
+            <div className="bg-gradient-to-b from-monedina-50 to-white pt-5">
               <Image
                 src="/personajes/monedina.webp"
                 alt="Monedina"

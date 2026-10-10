@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, type ReactNode } from "react";
 import datos from "@/data/datos.json";
-import { round2 } from "@/lib/finanzas";
+import { redondear, round2, soles } from "@/lib/finanzas";
 
 export type TipoMov = "ingreso" | "gasto" | "aporte";
 export type Mov = {
@@ -13,7 +13,7 @@ export type Mov = {
   fecha: string;
   nuevo?: boolean;
 };
-export type Tab = "inicio" | "chat" | "misiones" | "proyeccion" | "futuro";
+export type Tab = "inicio" | "chat" | "misiones" | "proyeccion" | "futuro" | "redondeo";
 export type Chip = {
   etiqueta: string;
   enviar?: string;
@@ -23,6 +23,7 @@ export type Chip = {
 };
 export type Msg = { id: number; de: "bot" | "juan"; texto: string; chips?: Chip[] };
 export type EstadoMision = "pendiente" | "lista" | "reclamada";
+export type TipoAviso = "kapicoin" | "ahorro";
 
 type Estado = {
   registrado: boolean;
@@ -38,17 +39,40 @@ type Estado = {
   kapicoins: number;
   misiones: Record<string, EstadoMision>;
   canjes: string[];
-  aviso: { id: number; texto: string } | null;
+  aviso: { id: number; texto: string; tipo: TipoAviso } | null;
   celebracion: string | null;
   leccion: IdPersonaje | null;
   leccionesVistas: IdPersonaje[];
+  redondeo: Redondeo;
 };
 
 export type IdPersonaje = "porky" | "sabiondo" | "kapifin" | "monedina";
 
+export type Redondeo = {
+  activo: boolean;
+  base: number;
+  hoy: number;
+  ahorroHoy: number;
+  semana: number;
+  ahorroSemana: number;
+  total: number;
+  historial: { id: number; texto: string; gasto: number; contado: number; ahorro: number }[];
+};
+
+// Métricas que pueden cumplir misiones por progreso (por ejemplo, "Ahorra S/ 5 con redondeos").
+export function valorMetrica(r: Redondeo, metrica: string) {
+  const valores: Record<string, number> = {
+    redondeosHoy: r.hoy,
+    ahorroRedondeoHoy: r.ahorroHoy,
+    redondeosSemana: r.semana,
+    ahorroRedondeoSemana: r.ahorroSemana,
+  };
+  return valores[metrica] ?? 0;
+}
+
 export const SUGERENCIAS: Chip[] = [
   { etiqueta: "Hoy recibí 350 soles", enviar: "Hoy recibí 350 soles" },
-  { etiqueta: "Gasté 6 en desayuno", enviar: "Gasté 6 en desayuno" },
+  { etiqueta: "Gasté 4.50 en desayuno", enviar: "Gasté 4.50 en desayuno" },
   { etiqueta: "¿Qué es una AFP?", enviar: "¿Qué es una AFP?" },
 ];
 
@@ -78,6 +102,16 @@ const inicial: Estado = {
   celebracion: null,
   leccion: null,
   leccionesVistas: [],
+  redondeo: {
+    activo: datos.redondeo.activo,
+    base: datos.redondeo.base,
+    hoy: datos.redondeo.hoy,
+    ahorroHoy: datos.redondeo.ahorroHoy,
+    semana: datos.redondeo.semana,
+    ahorroSemana: datos.redondeo.ahorroSemana,
+    total: datos.redondeo.total,
+    historial: datos.redondeo.historial,
+  },
 };
 
 let ultimoId = 1000;
@@ -115,20 +149,57 @@ function cumplir(misiones: Record<string, EstadoMision>, ...acciones: string[]) 
   return { ...misiones, ...Object.fromEntries(ids.map((id) => [id, "lista" as const])) };
 }
 
+// Marca como "lista" toda misión por progreso cuya métrica ya alcanzó su objetivo.
+function porMetricas(misiones: Record<string, EstadoMision>, r: Redondeo) {
+  const ids = datos.misiones
+    .filter((m) => m.metrica && m.objetivo !== null && misiones[m.id] === "pendiente")
+    .filter((m) => valorMetrica(r, m.metrica as string) >= (m.objetivo as number))
+    .map((m) => m.id);
+  if (ids.length === 0) return misiones;
+  return { ...misiones, ...Object.fromEntries(ids.map((id) => [id, "lista" as const])) };
+}
+
+// Suma un aporte al estado: saldos, racha de la semana, movimiento y misiones.
+function conAporte(e: Estado, prev: number, emer: number, motivo: string, id: number): Estado {
+  return {
+    ...e,
+    saldoPrev: round2(e.saldoPrev + prev),
+    saldoEmer: round2(e.saldoEmer + emer),
+    semanas: [...e.semanas.slice(0, -1), true],
+    movimientos: [
+      { id, tipo: "aporte", texto: motivo, monto: round2(prev + emer), fecha: "Hoy", nuevo: true },
+      ...e.movimientos,
+    ],
+    misiones: cumplir(e.misiones, "apartar", "semana"),
+  };
+}
+
 export const misionesPorReclamar = (misiones: Record<string, EstadoMision>) =>
   Object.values(misiones).filter((e) => e === "lista").length;
 
 function useCrearNido() {
   const [estado, setEstado] = useState<Estado>(inicial);
 
-  const avisar = (texto: string) => {
+  const avisar = (texto: string, tipo: TipoAviso = "kapicoin") => {
     const id = nuevoId();
-    setEstado((e) => ({ ...e, aviso: { id, texto } }));
+    setEstado((e) => ({ ...e, aviso: { id, texto, tipo } }));
     setTimeout(() => setEstado((e) => (e.aviso?.id === id ? { ...e, aviso: null } : e)), 1800);
+  };
+
+  // Cómo cambia la racha si esta semana se registra un aporte.
+  const efectoRacha = (aporta = true) => {
+    const antes = calcularRacha(estado.semanas);
+    const despues = aporta ? calcularRacha([...estado.semanas.slice(0, -1), true]) : antes;
+    return {
+      subioRacha: despues > antes,
+      racha: despues,
+      evoluciono: nivelMascota(despues).nivel > nivelMascota(antes).nivel,
+    };
   };
 
   return {
     ...estado,
+    avisar,
     // Al registrarse, Kapifin (líder del equipo) da la bienvenida a pantalla completa.
     registrar: (nombre: string) =>
       setEstado((e) => ({ ...e, registrado: true, nombre: nombre.trim() || e.nombre, leccion: "kapifin" })),
@@ -146,25 +217,37 @@ function useCrearNido() {
       }));
     },
     aportar: (prev: number, emer: number, motivo: string) => {
-      const antes = calcularRacha(estado.semanas);
-      const despues = calcularRacha([...estado.semanas.slice(0, -1), true]);
       const id = nuevoId();
+      setEstado((e) => conAporte(e, prev, emer, motivo, id));
+      return efectoRacha();
+    },
+    activarRedondeo: (activo: boolean) =>
       setEstado((e) => ({
         ...e,
-        saldoPrev: round2(e.saldoPrev + prev),
-        saldoEmer: round2(e.saldoEmer + emer),
-        semanas: [...e.semanas.slice(0, -1), true],
-        movimientos: [
-          { id, tipo: "aporte", texto: motivo, monto: round2(prev + emer), fecha: "Hoy", nuevo: true },
-          ...e.movimientos,
-        ],
-        misiones: cumplir(e.misiones, "apartar", "semana"),
-      }));
-      return {
-        subioRacha: despues > antes,
-        racha: despues,
-        evoluciono: nivelMascota(despues).nivel > nivelMascota(antes).nivel,
-      };
+        redondeo: { ...e.redondeo, activo },
+        misiones: activo ? cumplir(e.misiones, "activarRedondeo") : e.misiones,
+      })),
+    setBaseRedondeo: (base: number) => setEstado((e) => ({ ...e, redondeo: { ...e.redondeo, base } })),
+    // Aplica el redondeo ahorrativo a un gasto: la diferencia va al ahorro previsional.
+    redondearGasto: (monto: number, texto: string) => {
+      const { contado, ahorro } = redondear(monto, estado.redondeo.base);
+      if (ahorro <= 0) return { contado, ahorro, ...efectoRacha(false) };
+      const id = nuevoId();
+      setEstado((e) => {
+        const r = e.redondeo;
+        const redondeo: Redondeo = {
+          ...r,
+          hoy: r.hoy + 1,
+          ahorroHoy: round2(r.ahorroHoy + ahorro),
+          semana: r.semana + 1,
+          ahorroSemana: round2(r.ahorroSemana + ahorro),
+          total: round2(r.total + ahorro),
+          historial: [{ id, texto, gasto: monto, contado, ahorro }, ...r.historial],
+        };
+        const con = conAporte(e, ahorro, 0, `Redondeo: ${soles(monto)} → ${soles(contado)}`, id);
+        return { ...con, redondeo, misiones: porMetricas(con.misiones, redondeo) };
+      });
+      return { contado, ahorro, ...efectoRacha() };
     },
     cumplirMision: (accion: string) =>
       setEstado((e) => {

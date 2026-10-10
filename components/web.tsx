@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import datos from "@/data/datos.json";
 import { proyectar, soles } from "@/lib/finanzas";
-import { Avatar, Grafico, Kapicoin } from "@/components/comunes";
+import { Avatar, Grafico, Kapicoin, Logo } from "@/components/comunes";
 import { calcularRacha, misionesPorReclamar, nivelMascota, useNido, type TipoMov } from "@/components/estado";
 
 const ICONO: Record<TipoMov, LucideIcon> = { ingreso: ArrowDownLeft, gasto: Receipt, aporte: PiggyBank };
@@ -45,7 +45,10 @@ export function VistaWeb({ volver }: { volver: () => void }) {
 
         <div className="flex">
           <aside className="hidden w-60 shrink-0 flex-col border-r border-borde p-5 md:flex">
-            <p className="font-display text-2xl font-semibold text-marca-700">{datos.app.nombre}</p>
+            <p className="flex items-center gap-2.5 font-display text-2xl font-semibold text-marca-700">
+              <Logo tam={36} />
+              {datos.app.nombre}
+            </p>
             <nav className="mt-6 space-y-1 text-sm">
               {NAV.map(({ texto, icono: Icono }, i) => (
                 <p

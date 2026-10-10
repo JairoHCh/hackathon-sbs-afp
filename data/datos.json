@@ -98,7 +98,9 @@
       "accion": "entrar",
       "inicial": "lista",
       "icono": "sol",
-      "progreso": null
+      "progreso": null,
+      "metrica": null,
+      "objetivo": null
     },
     {
       "id": "d-registrar",
@@ -109,7 +111,9 @@
       "accion": "registrar",
       "inicial": "pendiente",
       "icono": "chat",
-      "progreso": null
+      "progreso": null,
+      "metrica": null,
+      "objetivo": null
     },
     {
       "id": "d-apartar",
@@ -120,7 +124,9 @@
       "accion": "apartar",
       "inicial": "pendiente",
       "icono": "alcancia",
-      "progreso": null
+      "progreso": null,
+      "metrica": null,
+      "objetivo": null
     },
     {
       "id": "d-dato",
@@ -131,7 +137,9 @@
       "accion": "dato",
       "inicial": "pendiente",
       "icono": "foco",
-      "progreso": null
+      "progreso": null,
+      "metrica": null,
+      "objetivo": null
     },
     {
       "id": "d-leccion",
@@ -142,7 +150,35 @@
       "accion": "leccion",
       "inicial": "pendiente",
       "icono": "foco",
-      "progreso": null
+      "progreso": null,
+      "metrica": null,
+      "objetivo": null
+    },
+    {
+      "id": "d-redondeo",
+      "tipo": "diaria",
+      "titulo": "Haz un redondeo hoy",
+      "detalle": "Cada compra redondeada suma a tu futuro",
+      "recompensa": 5,
+      "accion": "",
+      "inicial": "pendiente",
+      "icono": "moneda",
+      "progreso": null,
+      "metrica": "redondeosHoy",
+      "objetivo": 1
+    },
+    {
+      "id": "d-redondeo-sol",
+      "tipo": "diaria",
+      "titulo": "Ahorra S/ 1 con redondeos hoy",
+      "detalle": "Los centavos también construyen",
+      "recompensa": 10,
+      "accion": "",
+      "inicial": "pendiente",
+      "icono": "moneda",
+      "progreso": null,
+      "metrica": "ahorroRedondeoHoy",
+      "objetivo": 1
     },
     {
       "id": "s-semana",
@@ -153,7 +189,9 @@
       "accion": "semana",
       "inicial": "pendiente",
       "icono": "racha",
-      "progreso": null
+      "progreso": null,
+      "metrica": null,
+      "objetivo": null
     },
     {
       "id": "s-proyeccion",
@@ -164,7 +202,9 @@
       "accion": "proyeccion",
       "inicial": "pendiente",
       "icono": "grafico",
-      "progreso": null
+      "progreso": null,
+      "metrica": null,
+      "objetivo": null
     },
     {
       "id": "s-reto",
@@ -178,7 +218,48 @@
       "progreso": [
         2,
         5
-      ]
+      ],
+      "metrica": null,
+      "objetivo": null
+    },
+    {
+      "id": "s-redondeo-activar",
+      "tipo": "semanal",
+      "titulo": "Activa el redondeo ahorrativo",
+      "detalle": "Elige a cuánto redondear tus compras",
+      "recompensa": 15,
+      "accion": "activarRedondeo",
+      "inicial": "pendiente",
+      "icono": "moneda",
+      "progreso": null,
+      "metrica": null,
+      "objetivo": null
+    },
+    {
+      "id": "s-redondeo-5",
+      "tipo": "semanal",
+      "titulo": "Ahorra S/ 5 con redondeos",
+      "detalle": "Suma tus redondeos de la semana",
+      "recompensa": 40,
+      "accion": "",
+      "inicial": "pendiente",
+      "icono": "alcancia",
+      "progreso": null,
+      "metrica": "ahorroRedondeoSemana",
+      "objetivo": 5
+    },
+    {
+      "id": "s-redondeo-10",
+      "tipo": "semanal",
+      "titulo": "Haz 10 redondeos esta semana",
+      "detalle": "La constancia hace el hábito",
+      "recompensa": 30,
+      "accion": "",
+      "inicial": "pendiente",
+      "icono": "racha",
+      "progreso": null,
+      "metrica": "redondeosSemana",
+      "objetivo": 10
     }
   ],
   "tienda": [
@@ -265,5 +346,54 @@
       "monto": 280,
       "fecha": "29 set"
     }
-  ]
+  ],
+  "redondeo": {
+    "activo": false,
+    "base": 1,
+    "bases": [
+      1,
+      2,
+      5,
+      10
+    ],
+    "hoy": 0,
+    "ahorroHoy": 0,
+    "semana": 7,
+    "ahorroSemana": 3.2,
+    "total": 18.6,
+    "ejemplos": [
+      {
+        "texto": "Menú del día",
+        "monto": 12.4
+      },
+      {
+        "texto": "Pasaje",
+        "monto": 2.8
+      },
+      {
+        "texto": "Café",
+        "monto": 4.5
+      },
+      {
+        "texto": "Útiles",
+        "monto": 23.7
+      }
+    ],
+    "historial": [
+      {
+        "id": 7,
+        "texto": "Almuerzo",
+        "gasto": 12.4,
+        "contado": 13,
+        "ahorro": 0.6
+      },
+      {
+        "id": 6,
+        "texto": "Snack",
+        "gasto": 3.3,
+        "contado": 4,
+        "ahorro": 0.7
+      }
+    ]
+  }
 }

@@ -11,6 +11,15 @@ export function soles(n: number) {
   );
 }
 
+// Redondeo ahorrativo: sube el gasto al siguiente múltiplo de `base` y la
+// diferencia se ahorra. Se calcula en céntimos para evitar errores de decimales.
+export function redondear(monto: number, base: number) {
+  const centimos = Math.round(monto * 100);
+  const paso = Math.round(base * 100);
+  const contado = Math.ceil(centimos / paso) * paso;
+  return { contado: contado / 100, ahorro: (contado - centimos) / 100 };
+}
+
 export type Punto = { edad: number; valor: number };
 
 // Aportes mensuales constantes con capitalización mensual. La tasa es real

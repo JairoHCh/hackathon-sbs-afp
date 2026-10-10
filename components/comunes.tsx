@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import {
+  Coins,
   Crown,
   Flame,
   Gift,
@@ -29,12 +30,33 @@ export const TONOS = {
 } as const;
 
 // Tamaño real de las ilustraciones de cuerpo completo en /public/personajes.
-export const CUERPOS: Record<IdPersonaje, { ancho: number; alto: number }> = {
+const CUERPOS: Record<IdPersonaje, { ancho: number; alto: number }> = {
   porky: { ancho: 335, alto: 480 },
   sabiondo: { ancho: 315, alto: 480 },
-  kapifin: { ancho: 335, alto: 480 },
+  kapifin: { ancho: 263, alto: 480 },
   monedina: { ancho: 341, alto: 480 },
 };
+
+// Poses de Kapifin (hoja de emociones) en /public/personajes/kapifin.
+export const POSES_KAPIFIN: Record<string, { ancho: number; alto: number }> = {
+  saludo: { ancho: 263, alto: 480 },
+  curioso: { ancho: 300, alto: 480 },
+  feliz: { ancho: 291, alto: 480 },
+  dudoso: { ancho: 283, alto: 480 },
+  triste: { ancho: 428, alto: 480 },
+  seguro: { ancho: 384, alto: 480 },
+  sorprendido: { ancho: 417, alto: 480 },
+  motivado: { ancho: 285, alto: 480 },
+};
+
+// Ilustración de cuerpo completo; si el personaje tiene la pose pedida, usa esa.
+export function cuerpo(id: IdPersonaje, pose?: string) {
+  if (id === "kapifin") {
+    const p = pose && POSES_KAPIFIN[pose] ? pose : "saludo";
+    return { src: `/personajes/kapifin/${p}.webp`, ...POSES_KAPIFIN[p] };
+  }
+  return { src: `/personajes/${id}.webp`, ...CUERPOS[id] };
+}
 
 export const personaje = (id: IdPersonaje) => datos.personajes.find((p) => p.id === id) ?? datos.personajes[0];
 export const tono = (id: IdPersonaje) => TONOS[personaje(id).tono as keyof typeof TONOS];
@@ -50,7 +72,22 @@ export const ICONOS: Record<string, LucideIcon> = {
   escudo: ShieldCheck,
   corona: Crown,
   regalo: Gift,
+  moneda: Coins,
 };
+
+export function Logo({ tam = 40, className = "" }: { tam?: number; className?: string }) {
+  return (
+    <Image
+      src="/logo.png"
+      alt="Nido"
+      width={tam}
+      height={tam}
+      priority
+      className={`shrink-0 ${className}`}
+      style={{ width: tam, height: tam }}
+    />
+  );
+}
 
 export function Avatar({ id, tam = 44, className = "" }: { id: IdPersonaje; tam?: number; className?: string }) {
   return (
