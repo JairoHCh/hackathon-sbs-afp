@@ -43,7 +43,7 @@ import {
 export const TARJETA = "rounded-3xl bg-white p-4 shadow-suave";
 const INPUT =
   "mt-1.5 h-12 w-full rounded-2xl border border-borde bg-fondo px-4 text-[15px] outline-none transition focus:border-marca focus:bg-white focus:ring-4 focus:ring-marca/10";
-const EQUIPO: IdPersonaje[] = ["porky", "sabiondo", "kapifin", "monedina"];
+const EQUIPO: IdPersonaje[] = ["kapifin", "porky", "sabiondo", "monedina"];
 
 /* ───────────────────────── 1. Registro ───────────────────────── */
 
@@ -121,7 +121,7 @@ export function Registro() {
           </div>
           {tipo === "variable" && (
             <div className="animar-subida mt-3 flex items-center gap-3 rounded-2xl bg-marca-50 p-3">
-              <Avatar id="porky" tam={36} />
+              <Avatar id="monedina" tam={36} />
               <p className="text-[13px] leading-snug text-marca-700">
                 ¡Perfecto! No te pediremos un monto fijo. Apartas lo que puedas, cuando puedas.
               </p>
@@ -214,12 +214,12 @@ export function Inicio({ irA }: { irA: (t: Tab) => void }) {
           </div>
           <button
             type="button"
-            onClick={() => n.abrirLeccion("porky")}
-            aria-label="Que Porky Cash te explique"
+            onClick={() => n.abrirLeccion("monedina")}
+            aria-label="Que Monedina te explique"
             className="relative shrink-0 rounded-full transition active:scale-95"
           >
             <Avatar
-              id="porky"
+              id="monedina"
               tam={78}
               className={`transition ${nivel.nivel === 3 ? "ring-4 ring-kapifin" : "ring-4 ring-white/30"}`}
             />
@@ -483,7 +483,7 @@ export function Chat({ irA }: { irA: (t: Tab) => void }) {
             (r.subioRacha
               ? `\n\n🔥 Semana asegurada: tu racha sube a ${r.racha} semanas.`
               : "\n\n🔥 Tu semana ya estaba asegurada. ¡Esto suma igual!") +
-            (r.evoluciono ? `\n\n🐷 ¡Subí de nivel! Ahora soy ${nivelMascota(r.racha).nombre}.` : "") +
+            (r.evoluciono ? `\n\n🐱 ¡Monedina subió de nivel! Ahora es ${nivelMascota(r.racha).nombre}.` : "") +
             "\n\n🎯 Kapifin dice: ¡cumpliste misiones! Reclama tus Kapicoins.",
           chips: [
             { etiqueta: "Reclamar Kapicoins", ir: "misiones" },
@@ -658,7 +658,7 @@ export function Proyeccion() {
   );
 }
 
-/* ───────────────────────── 5. Mi meta (Monedina) ───────────────────────── */
+/* ───────────────────────── 5. Jubilación (Porky Cash) ───────────────────────── */
 
 export function Futuro({ irWeb }: { irWeb: () => void }) {
   const n = useNido();
@@ -668,28 +668,35 @@ export function Futuro({ irWeb }: { irWeb: () => void }) {
 
   return (
     <div className="space-y-4 px-5 pb-6 pt-3">
-      <section className="relative overflow-hidden rounded-3xl bg-monedina-50 shadow-suave">
+      <section className="relative overflow-hidden rounded-3xl bg-marca-50 shadow-suave">
         <div className="flex items-end">
           <div className="min-w-0 flex-1 p-5 pr-0">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-monedina-700">Tu meta con Monedina</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-marca-700">Tu jubilación con Porky Cash</p>
             <h1 className="mt-1 font-display text-2xl font-semibold leading-tight">{n.nombre} a los 65</h1>
-            <p className="mt-2 text-[14px] leading-snug">«¿Qué decisiones tomas hoy para que tu yo de 65 viva tranquilo?»</p>
+            <p className="mt-2 text-[14px] leading-snug">«Mi superpoder es pensar en el largo plazo: ¡cada sol cuenta!»</p>
+            <button
+              type="button"
+              onClick={() => n.abrirLeccion("porky")}
+              className="mt-3 rounded-full bg-white px-3 py-1.5 text-[13px] font-semibold text-marca-700 shadow-suave"
+            >
+              ¿Cómo funciona mi fondo?
+            </button>
           </div>
           <Image
-            src="/personajes/monedina.webp"
-            alt="Monedina"
+            src="/personajes/porky.webp"
+            alt="Porky Cash"
             width={120}
-            height={169}
-            className="h-[169px] w-[120px] shrink-0 object-cover object-top mix-blend-multiply"
+            height={172}
+            className="h-[172px] w-[120px] shrink-0 object-cover object-top mix-blend-multiply"
           />
         </div>
       </section>
 
       <section className={TARJETA}>
         <p className="text-sm text-suave">Si mantienes {soles(n.aporteMensual)} al mes en promedio, a los 65 tendrías</p>
-        <p className="mt-1 text-[36px] font-bold leading-tight tracking-tight tabular-nums text-monedina-700">{soles(a.total)}</p>
+        <p className="mt-1 text-[36px] font-bold leading-tight tracking-tight tabular-nums text-marca-700">{soles(a.total)}</p>
         <p className="text-sm text-suave">Equivale a ≈ {soles(Math.round(a.total / 240))} al mes durante 20 años*</p>
-        <p className="mt-3 rounded-2xl bg-monedina-50 px-3 py-2.5 text-[13px] text-monedina-700">
+        <p className="mt-3 rounded-2xl bg-marca-50 px-3 py-2.5 text-[13px] text-marca-700">
           {racha >= 6
             ? `¡Gracias por no olvidarme estas ${racha} semanas! Así se construye tu tranquilidad.`
             : "Cada semana que apartas algo, te acercas a una vejez tranquila."}

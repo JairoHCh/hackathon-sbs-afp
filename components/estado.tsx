@@ -96,9 +96,9 @@ export function calcularRacha(semanas: boolean[]) {
 }
 
 export const NIVELES = [
-  { nivel: 1, nombre: "Porky Novato", desde: 0 },
-  { nivel: 2, nombre: "Porky Constante", desde: 3 },
-  { nivel: 3, nombre: "Porky Maestro", desde: 6 },
+  { nivel: 1, nombre: "Monedina Novata", desde: 0 },
+  { nivel: 2, nombre: "Monedina Constante", desde: 3 },
+  { nivel: 3, nombre: "Monedina Maestra", desde: 6 },
 ];
 
 export function nivelMascota(racha: number) {
@@ -129,8 +129,9 @@ function useCrearNido() {
 
   return {
     ...estado,
+    // Al registrarse, Kapifin (líder del equipo) da la bienvenida a pantalla completa.
     registrar: (nombre: string) =>
-      setEstado((e) => ({ ...e, registrado: true, nombre: nombre.trim() || e.nombre })),
+      setEstado((e) => ({ ...e, registrado: true, nombre: nombre.trim() || e.nombre, leccion: "kapifin" })),
     agregarMsg: (de: Msg["de"], texto: string, chips?: Chip[]) => {
       const id = nuevoId();
       setEstado((e) => ({ ...e, chat: [...e.chat, { id, de, texto, chips }] }));

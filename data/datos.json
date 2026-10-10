@@ -32,59 +32,59 @@
   },
   "personajes": [
     {
+      "id": "kapifin",
+      "nombre": "Kapifin",
+      "lema": "Organiza hoy, logra mañana",
+      "tema": "Ordena tu dinero",
+      "rol": "Líder del equipo: orden, metas y misiones",
+      "tono": "kapifin",
+      "frase": "¡Sin plan, no hay meta! Yo me encargo de que todo tenga un orden.",
+      "consejos": [
+        "Anota tus ingresos y separa tus gastos en esenciales y no esenciales.",
+        "Prueba la regla 50/30/20 y adáptala a tu realidad.",
+        "Ponle nombre, monto y fecha a tus metas."
+      ]
+    },
+    {
       "id": "porky",
       "nombre": "Porky Cash",
       "lema": "Tu aliado en el ahorro",
-      "tema": "Ahorro",
-      "rol": "Tu asistente de WhatsApp y tu racha",
+      "tema": "Tu jubilación",
+      "rol": "Tu jubilación y tu asistente de WhatsApp",
       "tono": "marca",
-      "frase": "¡Cuéntame cada ingreso y te ayudo a apartar sin presión!",
+      "frase": "Mi superpoder es pensar en el largo plazo: ¡cada sol cuenta!",
       "consejos": [
-        "Una semana floja no rompe tu racha: con S/ 1 la mantienes viva.",
-        "Primero arma tu fondo de emergencia; así no tocarás tu ahorro para la vejez.",
-        "¿Desayuno de S/ 6? Bájalo a S/ 3 tres días y ya hiciste tu aporte."
+        "Pequeños aportes hoy construyen tus ingresos para cuando te jubiles.",
+        "Un fondo no crece mágicamente: su valor puede subir o bajar.",
+        "Empezar a planificar con anticipación te da más tiempo para acumular."
       ]
     },
     {
       "id": "sabiondo",
       "nombre": "Sabiondo",
       "lema": "Haz crecer tus metas",
-      "tema": "Interés compuesto",
-      "rol": "Te explica cómo crece tu ahorro",
+      "tema": "Bonos",
+      "rol": "Inversiones y cómo crece tu dinero",
       "tono": "sabiondo",
-      "frase": "El interés compuesto hace que tus ganancias también ganen. ¡El tiempo es tu superpoder!",
+      "frase": "¡Yo siempre te recomiendo leer las condiciones antes de invertir!",
       "consejos": [
-        "Lo que más ayuda a tu pensión no es el monto: es empezar temprano.",
-        "Si trabajas por tu cuenta, también puedes aportar de forma voluntaria a una AFP.",
-        "Cada retiro anticipado reinicia el reloj del interés compuesto."
-      ]
-    },
-    {
-      "id": "kapifin",
-      "nombre": "Kapifin",
-      "lema": "Organiza hoy, logra mañana",
-      "tema": "Organízate",
-      "rol": "Tus misiones y Kapicoins",
-      "tono": "kapifin",
-      "frase": "Cumple misiones, gana Kapicoins y canjéalas por recompensas.",
-      "consejos": [
-        "Las misiones diarias se renuevan cada día: entra, registra y aparta.",
-        "Asegurar tu semana da la recompensa más grande: 50 Kapicoins.",
-        "Guarda Kapicoins para congelar tu racha en una semana difícil."
+        "Cuando compras un bono, le prestas dinero a un gobierno o a una empresa.",
+        "Los cupones son los intereses que pagan algunos bonos.",
+        "Renta fija no significa que nunca perderás dinero."
       ]
     },
     {
       "id": "monedina",
       "nombre": "Monedina",
       "lema": "Guarda hoy, cumple mañana",
-      "tema": "Tu pensión",
-      "rol": "Tu meta: tu yo de 65",
+      "tema": "Hábito de ahorro",
+      "rol": "Tu hábito y tu racha",
       "tono": "monedina",
-      "frase": "¿Qué decisiones tomas hoy para que tu yo de 65 viva tranquilo?",
+      "frase": "Yo no espero a tener dinero de sobra: separo una cantidad de manera regular.",
       "consejos": [
-        "Soy tu meta: lo que apartes hoy es lo que tendrás a los 65.",
-        "No te pido mucho: te pido constancia cada semana.",
-        "Ponle nombre a tu meta: es más fácil cumplir lo que imaginas."
+        "Elige un monto realista que no descuide tus gastos esenciales.",
+        "Programa tu ahorro justo después de recibir tus ingresos.",
+        "Revisa tus avances y ajusta el monto cuando cambie tu situación."
       ]
     }
   ],

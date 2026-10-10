@@ -15,7 +15,7 @@ const PESTANAS: { id: Tab; icono: LucideIcon; texto: string }[] = [
   { id: "chat", icono: MessageCircle, texto: "WhatsApp" },
   { id: "misiones", icono: Target, texto: "Misiones" },
   { id: "proyeccion", icono: TrendingUp, texto: "Proyección" },
-  { id: "futuro", icono: Flag, texto: "Mi meta" },
+  { id: "futuro", icono: Flag, texto: "Jubilación" },
 ];
 
 export default function Prototipo() {
@@ -158,15 +158,15 @@ function Telefono({ irWeb }: { irWeb: () => void }) {
           <div className="animar-subida w-full overflow-hidden rounded-3xl bg-white text-center shadow-2xl">
             <div className="bg-gradient-to-b from-marca-50 to-white pt-5">
               <Image
-                src="/personajes/porky.webp"
-                alt="Porky Cash"
+                src="/personajes/monedina.webp"
+                alt="Monedina"
                 width={140}
-                height={200}
+                height={197}
                 className="mx-auto h-[200px] w-[140px] object-cover object-top mix-blend-multiply"
               />
             </div>
             <div className="px-6 pb-6">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-kapifin-900">¡Porky subió de nivel!</p>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-kapifin-900">¡Monedina subió de nivel!</p>
               <p className="mt-1 font-display text-2xl font-semibold">{n.celebracion}</p>
               <p className="mt-2 text-sm text-suave">
                 {calcularRacha(n.semanas)} semanas seguidas apartando algo. La constancia vale más que el monto.

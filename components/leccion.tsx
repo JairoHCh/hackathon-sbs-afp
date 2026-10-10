@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Check, X } from "lucide-react";
+import { ArrowRight, Check, X } from "lucide-react";
 import lecciones from "@/data/lecciones.json";
 import { Avatar, CUERPOS, Kapicoin, personaje, tono, type IdPersonaje } from "@/components/comunes";
 import { useNido, type Tab } from "@/components/estado";
@@ -10,6 +10,9 @@ import { useNido, type Tab } from "@/components/estado";
 type Paso = {
   titulo: string;
   texto?: string;
+  nota?: string;
+  boton?: string;
+  equipo?: boolean;
   pregunta?: string;
   opciones?: string[];
   correcta?: number;
@@ -19,6 +22,7 @@ type Paso = {
 type Guion = { cta: { texto: string; ir: string }; pasos: Paso[] };
 
 const GUIONES = lecciones as unknown as Record<IdPersonaje, Guion>;
+const EQUIPO: IdPersonaje[] = ["kapifin", "porky", "sabiondo", "monedina"];
 
 // Pantalla completa en la que un personaje explica su tema paso a paso.
 export function Leccion({ id, irA }: { id: IdPersonaje; irA: (t: Tab) => void }) {
@@ -113,14 +117,16 @@ export function Leccion({ id, irA }: { id: IdPersonaje; irA: (t: Tab) => void })
       </div>
 
       {/* Guion */}
-      <div key={paso} className="animar-subida mx-3 mb-3 rounded-[28px] bg-white p-5 shadow-suave">
+      <div key={paso} className="animar-subida mx-3 mb-3 max-h-[68%] overflow-y-auto rounded-[28px] bg-white p-5 shadow-suave">
         {fin ? (
           <div className="text-center">
             <span className={`mx-auto grid size-14 place-items-center rounded-full ${t.solido}`}>
               <Check className="size-7" aria-hidden="true" />
             </span>
             <h2 className="mt-3 font-display text-2xl font-semibold">¡Lección completada!</h2>
-            <p className="mt-1 text-sm text-suave">Ya sabes más sobre {p.tema.toLowerCase()}.</p>
+            <p className="mt-1 text-sm text-suave">
+              Completaste «{p.tema}» con {p.nombre}.
+            </p>
             {misionNueva && (
               <p className="mx-auto mt-3 flex w-fit items-center gap-2 rounded-full bg-kapifin-50 px-3 py-1.5 text-sm font-semibold text-kapifin-900">
                 <Kapicoin tam={18} /> Misión cumplida: reclama +10 en Misiones
@@ -149,7 +155,23 @@ export function Leccion({ id, irA }: { id: IdPersonaje; irA: (t: Tab) => void })
               {esPregunta ? "Mini reto" : `Paso ${paso + 1} de ${pasos.length}`}
             </p>
             <h2 className={`mt-1 font-display text-[22px] font-semibold leading-tight ${t.texto}`}>{actual.titulo}</h2>
+            {actual.equipo && (
+              <div className="animar-subida mt-3 grid grid-cols-4 gap-1">
+                {EQUIPO.map((x) => (
+                  <span key={x} className="flex flex-col items-center gap-1">
+                    <Avatar id={x} tam={44} className="shadow-suave" />
+                    <span className="text-center text-[10.5px] font-semibold leading-tight">{personaje(x).nombre}</span>
+                  </span>
+                ))}
+              </div>
+            )}
             {actual.texto && <Palabras texto={actual.texto} />}
+            {actual.nota && (
+              <div className={`mt-3 flex gap-2.5 rounded-2xl px-3 py-2.5 ${t.fondo}`}>
+                <Avatar id={id} tam={26} className="mt-0.5" />
+                <Palabras texto={actual.nota} retraso={120 + (actual.texto?.split(" ").length ?? 0) * 35} compacto />
+              </div>
+            )}
 
             {esPregunta && (
               <>
@@ -206,9 +228,12 @@ export function Leccion({ id, irA }: { id: IdPersonaje; irA: (t: Tab) => void })
                 type="button"
                 disabled={esPregunta && respuesta === null}
                 onClick={avanzar}
-                className={`h-12 flex-1 rounded-2xl font-semibold transition active:scale-[0.99] disabled:opacity-40 ${t.solido}`}
+                className={`flex h-12 flex-1 items-center justify-center gap-1.5 rounded-2xl px-3 text-[15px] font-semibold leading-tight transition active:scale-[0.99] disabled:opacity-40 ${t.solido}`}
               >
-                {esPregunta && respuesta === null ? "Elige una respuesta" : paso === pasos.length - 1 ? "Terminar" : "Siguiente"}
+                {esPregunta && respuesta === null
+                  ? "Elige una respuesta"
+                  : (actual.boton ?? (paso === pasos.length - 1 ? "Terminar" : "Siguiente"))}
+                {!(esPregunta && respuesta === null) && <ArrowRight className="size-4 shrink-0" aria-hidden="true" />}
               </button>
             </div>
           </>
@@ -219,11 +244,27 @@ export function Leccion({ id, irA }: { id: IdPersonaje; irA: (t: Tab) => void })
 }
 
 // Muestra el texto palabra por palabra, como si el personaje lo estuviera diciendo.
-function Palabras({ texto, fuerte = false }: { texto: string; fuerte?: boolean }) {
+function Palabras({
+  texto,
+  fuerte = false,
+  compacto = false,
+  retraso = 120,
+}: {
+  texto: string;
+  fuerte?: boolean;
+  compacto?: boolean;
+  retraso?: number;
+}) {
   return (
-    <p className={`mt-2 text-[15px] leading-relaxed ${fuerte ? "font-semibold text-tinta" : "text-tinta/85"}`}>
+    <p
+      className={
+        compacto
+          ? "text-[14px] leading-snug text-tinta/90"
+          : `mt-2 text-[15px] leading-relaxed ${fuerte ? "font-semibold text-tinta" : "text-tinta/85"}`
+      }
+    >
       {texto.split(" ").map((palabra, i) => (
-        <span key={i} className="animar-palabra" style={{ animationDelay: `${120 + i * 35}ms` }}>
+        <span key={i} className="animar-palabra" style={{ animationDelay: `${retraso + i * 35}ms` }}>
           {palabra}{" "}
         </span>
       ))}

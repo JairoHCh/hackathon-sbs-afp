@@ -152,11 +152,11 @@ export function VistaWeb({ volver }: { volver: () => void }) {
               </section>
             </div>
 
-            <section className="flex items-center gap-4 rounded-3xl bg-monedina-50 p-4">
-              <Avatar id="monedina" tam={52} />
-              <p className="text-sm text-monedina-700">
-                <b className="font-display text-base">Monedina:</b> «¿Qué decisiones tomas hoy para que tu yo de 65 viva
-                tranquilo?»
+            <section className="flex items-center gap-4 rounded-3xl bg-marca-50 p-4">
+              <Avatar id="porky" tam={52} />
+              <p className="text-sm text-marca-700">
+                <b className="font-display text-base">Porky Cash:</b> «Mi superpoder es pensar en el largo plazo: ¡cada sol
+                cuenta!»
               </p>
             </section>
           </main>
