@@ -1,0 +1,8 @@
+{
+  "mensaje": "Hola mundo desde datos.json",
+  "afiliados": [
+    { "id": 1, "nombre": "Ana Quispe", "fondo": "Fondo 2", "aporteMensual": 320.5 },
+    { "id": 2, "nombre": "Luis Ramos", "fondo": "Fondo 1", "aporteMensual": 210.0 },
+    { "id": 3, "nombre": "Marta Flores", "fondo": "Fondo 3", "aporteMensual": 540.75 }
+  ]
+}
