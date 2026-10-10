@@ -1,8 +1,103 @@
 {
-  "mensaje": "Hola mundo desde datos.json",
-  "afiliados": [
-    { "id": 1, "nombre": "Ana Quispe", "fondo": "Fondo 2", "aporteMensual": 320.5 },
-    { "id": 2, "nombre": "Luis Ramos", "fondo": "Fondo 1", "aporteMensual": 210.0 },
-    { "id": 3, "nombre": "Marta Flores", "fondo": "Fondo 3", "aporteMensual": 540.75 }
+  "app": {
+    "nombre": "Nido",
+    "lema": "Ahorra a tu ritmo, para tu yo del futuro"
+  },
+  "usuario": {
+    "nombre": "Juan",
+    "edad": 20,
+    "correo": "juan.ejemplo@gmail.com",
+    "tipoIngreso": "variable",
+    "frase": "Quiero ahorrar, pero no sé cuánto ganaré el próximo mes."
+  },
+  "estadoInicial": {
+    "saldoPrevisional": 142.5,
+    "saldoEmergencia": 60,
+    "semanas": [true, true, true, true, true, false],
+    "aporteMensual": 60,
+    "tasa": 0.04
+  },
+  "regla": {
+    "porcentaje": 0.1,
+    "parteEmergencia": 0.3,
+    "minimo": 1
+  },
+  "personajes": [
+    {
+      "id": "ardilla",
+      "nombre": "La Ardilla Constante",
+      "corto": "Ardilla",
+      "emoji": "🐿️",
+      "rol": "Tu hábito",
+      "frase": "¡No necesitas empezar con mucho; necesitas empezar y ser constante!",
+      "consejos": [
+        "Una semana floja no rompe tu racha: con S/ 1 la mantienes viva.",
+        "Cuéntame cada ingreso apenas llegue y yo te sugiero cuánto apartar.",
+        "¿Desayuno de S/ 6? Bájalo a S/ 3 tres días y ya hiciste tu aporte."
+      ]
+    },
+    {
+      "id": "guardian",
+      "nombre": "El Guardián del Futuro",
+      "corto": "Guardián",
+      "emoji": "🛡️",
+      "rol": "Tu ahorro previsional",
+      "frase": "¡Cada aporte de hoy es una ayuda para tu yo del futuro!",
+      "consejos": [
+        "Primero arma tu fondo de emergencia; así no tendrás que tocar tu ahorro para la vejez.",
+        "Lo que más ayuda a tu pensión no es el monto: es empezar temprano.",
+        "Si trabajas por tu cuenta, también puedes aportar de forma voluntaria a una AFP."
+      ]
+    },
+    {
+      "id": "donfuturo",
+      "nombre": "Don Futuro",
+      "corto": "Don Futuro",
+      "emoji": "👴",
+      "rol": "Tú a los 65",
+      "frase": "¿Qué decisiones estás tomando hoy para que yo pueda vivir con tranquilidad mañana?",
+      "consejos": [
+        "Soy tú dentro de 45 años. Lo que apartes hoy es lo que yo tendré.",
+        "No te pido mucho: te pido que no me olvides cada semana.",
+        "Cada vez que retiras tu ahorro, yo empiezo de cero."
+      ]
+    }
+  ],
+  "reto": {
+    "titulo": "Desayuno inteligente",
+    "detalle": "Baja tu desayuno de S/ 6 a S/ 3 esta semana",
+    "progreso": 2,
+    "meta": 5,
+    "ahorroEstimado": 15
+  },
+  "beneficio": {
+    "marca": "Librería Ejemplo",
+    "detalle": "15% de descuento en útiles",
+    "semanasMeta": 8
+  },
+  "datosDelDia": [
+    {
+      "texto": "Solo 1 de cada 5 jóvenes de 18 a 24 años hace algo para cubrir sus gastos en la vejez.",
+      "fuente": "SBS, Encuesta Nacional de Estrategias de Ahorro a Largo Plazo (2017)"
+    },
+    {
+      "texto": "7 de cada 10 peruanos cree que ahorrar para la vejez es muy importante, pero solo 3 de cada 10 hace algo al respecto.",
+      "fuente": "SBS, Encuesta Nacional de Estrategias de Ahorro a Largo Plazo (2017)"
+    },
+    {
+      "texto": "En promedio, los peruanos empiezan a ahorrar para su vejez recién a los 32 años.",
+      "fuente": "Notas SBS N.° 002 (2018)"
+    },
+    {
+      "texto": "Solo alrededor de 28 de cada 100 personas que trabajan aportan a un sistema de pensiones.",
+      "fuente": "OIT, La situación actual de las pensiones en el Perú (2023)"
+    }
+  ],
+  "movimientos": [
+    { "id": 5, "tipo": "aporte", "texto": "Aporte desde WhatsApp", "monto": 15, "fecha": "5 oct" },
+    { "id": 4, "tipo": "ingreso", "texto": "Pago por delivery", "monto": 150, "fecha": "5 oct" },
+    { "id": 3, "tipo": "gasto", "texto": "Almuerzo", "monto": 12.4, "fecha": "3 oct" },
+    { "id": 2, "tipo": "aporte", "texto": "Redondeo de gasto", "monto": 0.6, "fecha": "3 oct" },
+    { "id": 1, "tipo": "ingreso", "texto": "Clases particulares", "monto": 280, "fecha": "29 set" }
   ]
 }
